@@ -3,7 +3,6 @@ package com.wubeibei.smartscreenphone.fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,23 +13,30 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.wubeibei.smartscreenphone.R;
-import com.wubeibei.smartscreenphone.activity.MainActivity;
+import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.util.BaseHandler;
+
+import org.greenrobot.eventbus.Subscribe;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.wubeibei.smartscreenphone.command.SignalName.BMS_SOC;
+import static com.wubeibei.smartscreenphone.command.SignalName.OBU_LocalTimeHour;
+import static com.wubeibei.smartscreenphone.command.SignalName.OBU_LocalTimeMinute;
+
 
 public class MainTopFragment extends Fragment {
     private static final String TAG = "MainTopFragment";
-    public final static int TOP_FRAGMENT = 1;
     private final int TIME_FLAG_LOCAL = 10080;//本地时间
-    private MainActivity activity = null;
     private ImageView networkIv;//网络信号
     private TextView timeTv;//时间
+    private int hh = 12;
+    private int mm = 0;
     private ImageView batteryIv;//电池图片
     private TextView batteryTv;//电池文字
     private TimeThread timeThread = null;//时间线程
@@ -38,10 +44,6 @@ public class MainTopFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        activity = (MainActivity)getActivity();
-        if (activity != null) {
-            activity.setHandler(TOP_FRAGMENT,topHandler);
-        }
     }
 
     @Override
@@ -66,51 +68,49 @@ public class MainTopFragment extends Fragment {
         timeThread.setFlag(false);
     }
 
-    /**
-     *更新界面
-     */
-    public void refresh(JSONObject object){
-        int id = object.getIntValue("id");
-        Object data = object.get("data");
-//        if(id == HAD_GPSPositioningStatus){//GPS状态
-//            //TODO GPS状态显示
-//        }
-//        if(id == OBU_LocalTime){//本地时间
-//            if (data != null) {
-//                timeTv.setText(transTime((JSONObject)data));
-//            }
-//        }
-//        if(id == BMS_SOC){//动力电池剩余电量SOC
-//            int batteryNum = (int) object.getDoubleValue("data");
-//            if(batteryNum > 100){
-//                batteryNum = 100;
-//            }
-//            batteryTv.setText(String.valueOf(batteryNum)+"%");
-//            if(batteryNum >=0 && batteryNum < 17){
-//                batteryIv.setBackgroundResource(R.drawable.ic_battery_1);
-//            }else if(batteryNum >= 17 && batteryNum < 37){
-//                batteryIv.setBackgroundResource(R.drawable.ic_battery_2);
-//            }else if(batteryNum >=37 && batteryNum < 54){
-//                batteryIv.setBackgroundResource(R.drawable.ic_battery_3);
-//            }else if(batteryNum >= 54 && batteryNum < 71){
-//                batteryIv.setBackgroundResource(R.drawable.ic_battery_4);
-//            }else if(batteryNum >= 71 && batteryNum < 90){
-//                batteryIv.setBackgroundResource(R.drawable.ic_battery_5);
-//            }else if(batteryNum >= 90){
-//                batteryIv.setBackgroundResource(R.drawable.ic_battery_5);
-//            }
-//        }
+    // 接收Server发来的指令
+    @Subscribe
+    public void messageEventBus(MessageWrap messageWrap) {
+        JSONObject jsonObject = JSON.parseObject(messageWrap.getMessage());
+        String action = jsonObject.getString("action");
+        if (action.equals("modify")) {
+            JSONObject data = jsonObject.getJSONObject("data");
+            String signal = data.getString("signal_name");
+            if (signal.equals(OBU_LocalTimeMinute.toString())) {//本地时间
+                mm = (int) data.getDoubleValue("value");
+                timeTv.setText(transTime(mm,hh));
+            }else if (signal.equals(OBU_LocalTimeHour.toString())){
+                hh = (int) data.getDoubleValue("value");
+                timeTv.setText(transTime(mm,hh));
+            }
+            if (signal.equals(BMS_SOC.toString())) {//动力电池剩余电量SOC
+                int value = (int) data.getDoubleValue("value");
+                if (value > 100) {
+                    value = 100;
+                }
+                batteryTv.setText(value + "%");
+                if (value >= 0 && value < 17) {
+                    batteryIv.setBackgroundResource(R.drawable.ic_battery_1);
+                } else if (value >= 17 && value < 37) {
+                    batteryIv.setBackgroundResource(R.drawable.ic_battery_2);
+                } else if (value >= 37 && value < 54) {
+                    batteryIv.setBackgroundResource(R.drawable.ic_battery_3);
+                } else if (value >= 54 && value < 71) {
+                    batteryIv.setBackgroundResource(R.drawable.ic_battery_4);
+                } else if (value >= 71 && value < 90) {
+                    batteryIv.setBackgroundResource(R.drawable.ic_battery_5);
+                } else if (value >= 90) {
+                    batteryIv.setBackgroundResource(R.drawable.ic_battery_5);
+                }
+            }
+        }
     }
 
     /**
      * 转换时间
-     * @param object 时间数据
-     * @return 时间
      */
-    private String transTime(JSONObject object){
+    private String transTime(int hour, int minute){
         StringBuilder builder = new StringBuilder();
-        int hour = object.getIntValue("hour");
-        int minute = object.getIntValue("minute");
         hour %= 24;
         minute %= 60;
         String finalHour = String.format(Locale.CHINA,"%02d",hour);
@@ -124,16 +124,11 @@ public class MainTopFragment extends Fragment {
     private BaseHandler topHandler = new BaseHandler(this, new BaseHandler.HandlerCallback() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
-                case TIME_FLAG_LOCAL:{//本地时间更新
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.CHINA);
-                    String date = sdf.format(new Date());
-                    timeTv.setText(date);
-                    break;
-                }
-                default:
-                    refresh((JSONObject) msg.obj);
-                    break;
+            //本地时间更新
+            if (msg.what == TIME_FLAG_LOCAL) {
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.CHINA);
+                String date = sdf.format(new Date());
+                timeTv.setText(date);
             }
         }
     });

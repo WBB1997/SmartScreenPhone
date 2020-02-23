@@ -1,17 +1,14 @@
 package com.wubeibei.smartscreenphone.activity;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -20,16 +17,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.alibaba.fastjson.JSONObject;
 import com.wubeibei.smartscreenphone.R;
 import com.wubeibei.smartscreenphone.fragment.MainDownFragment;
-import com.wubeibei.smartscreenphone.fragment.MainLeftFragment;
 import com.wubeibei.smartscreenphone.fragment.MainRightFragment;
 import com.wubeibei.smartscreenphone.fragment.MainSeatSensorFragment;
 import com.wubeibei.smartscreenphone.fragment.MainShowFragment;
 import com.wubeibei.smartscreenphone.fragment.MainTopFragment;
 import com.wubeibei.smartscreenphone.util.ActivityCollector;
-import com.wubeibei.smartscreenphone.util.BaseHandler;
 import com.wubeibei.smartscreenphone.util.ScreenAdapter;
 import com.wubeibei.smartscreenphone.view.CustomOnClickListener;
 
@@ -45,7 +39,6 @@ public class MainActivity extends BaseActivity{
     private MainDownFragment downFragment = null;
     private MainRightFragment rightFragment = null;
     private MainSeatSensorFragment sensorFragment = null;
-    private MainLeftFragment leftFragment = null;
     private boolean autoDriveModel = false;//默认关闭自动驾驶模式
     public static boolean target = false;//默认没跳转
 //    private int currentDriveModel = DRIVE_MODEL_AUTO_AWAIT;//当前驾驶状态默认为待定
@@ -91,12 +84,12 @@ public class MainActivity extends BaseActivity{
         rightDrawerLayout.addDrawerListener(rightDrawerListener);
         rightDLClickBtn = findViewById(R.id.right_drawerLayout_click_btn);
         rightDLClickBtn.setOnClickListener(onClickListener);
+
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
         topFragment = (MainTopFragment) fragmentManager.findFragmentById(R.id.main_activity_top_fragment);
         showFragment = (MainShowFragment) fragmentManager.findFragmentById(R.id.main_activity_show_fragment);
         downFragment = (MainDownFragment) fragmentManager.findFragmentById(R.id.main_activity_down_fragment);
-        leftFragment = (MainLeftFragment) fragmentManager.findFragmentById(R.id.main_activity_left_fragment);
         rightFragment = (MainRightFragment) fragmentManager.findFragmentById(R.id.main_activity_right_fragment);
         sensorFragment = new MainSeatSensorFragment();
         transaction.add(R.id.main_activity_center_seatsensor, sensorFragment);

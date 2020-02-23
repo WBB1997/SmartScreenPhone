@@ -15,13 +15,42 @@ import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.wubeibei.smartscreenphone.R;
+import com.wubeibei.smartscreenphone.activity.App;
 import com.wubeibei.smartscreenphone.activity.MainActivity;
+import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.util.BaseHandler;
+import com.wubeibei.smartscreenphone.util.LogUtil;
 import com.wubeibei.smartscreenphone.view.CustomOnClickListener;
+
+import org.greenrobot.eventbus.Subscribe;
+
+import static com.wubeibei.smartscreenphone.command.MessageName.HMI;
+import static com.wubeibei.smartscreenphone.command.SignalName.BCM_ACBlowingLevel;
+import static com.wubeibei.smartscreenphone.command.SignalName.BCM_DemisterStatus;
+import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_DangerAlarmLamp;
+import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_HighBeam;
+import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_LeftTurningLamp;
+import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_LowBeam;
+import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_RearFogLamp;
+import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_RightTurningLamp;
+import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_DangerAlarmLamp;
+import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_Demister_Control;
+import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_FANPWM_Control;
+import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_FrontFogLamp;
+import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_LeftTurningLamp;
+import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_LoWBeam;
+import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_RearFogLamp;
+import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_RightTurningLamp;
+import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_air_grade;
+import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_air_model;
+import static com.wubeibei.smartscreenphone.command.SignalName.RCU_Dig_Ord_SystemStatus;
+import static com.wubeibei.smartscreenphone.command.SignalName.VCU_ACWorkingStatus;
 
 public class MainRightFragment extends Fragment {
     private static final String TAG = "MainRightFragment";
@@ -41,9 +70,6 @@ public class MainRightFragment extends Fragment {
     private ImageButton deFogBtn;//除雾
     private SeekBar seekBar;//滑块
     private View rightFragmentDlClickBtn;
-    //发送CAN总线的数据
-//    private int canType = HOST_TO_CAN;
-    private String clazz = "HMI";//所属类名
     private int field = -1;//属性
     private Object o = null;//状态
     private boolean typeFlag = false;//判断是否改变状态
@@ -55,9 +81,6 @@ public class MainRightFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         activity = (MainActivity) getActivity();
-//        if (activity != null) {
-//            activity.setHandler(RIGHT_FRAGMENT, rightHandler);
-//        }
     }
 
     @Nullable
@@ -72,38 +95,38 @@ public class MainRightFragment extends Fragment {
         rightLayout = view.findViewById(R.id.main_activity_right_layout);
         rightLayout.getBackground().setAlpha(200);
         lowbeamBtn = view.findViewById(R.id.rightFragment_lowBeam);
-//        lowbeamBtn.setEnabled(false);
-//        lowbeamBtn.setOnClickListener(onClickListener);
+        lowbeamBtn.setEnabled(false);
+        lowbeamBtn.setOnClickListener(onClickListener);
         highbeamBtn = view.findViewById(R.id.rightFragment_highBeam);
-//        highbeamBtn.setOnClickListener(onClickListener);
-//        highbeamBtn.setEnabled(false);
+        highbeamBtn.setOnClickListener(onClickListener);
+        highbeamBtn.setEnabled(false);
         frontFogLightBtn = view.findViewById(R.id.rightFragment_frontFogLight);
-//        frontFogLightBtn.setOnClickListener(onClickListener);
+        frontFogLightBtn.setOnClickListener(onClickListener);
         backFogLightBtn = view.findViewById(R.id.rightFragment_backFogLight);
-//        backFogLightBtn.setOnClickListener(onClickListener);
+        backFogLightBtn.setOnClickListener(onClickListener);
         errorLightBtn = view.findViewById(R.id.rightFragment_errorLight);
-//        errorLightBtn.setOnClickListener(onClickListener);
+        errorLightBtn.setOnClickListener(onClickListener);
         leftLightBtn = view.findViewById(R.id.rightFragment_leftLight);
-//        leftLightBtn.setOnClickListener(onClickListener);
+        leftLightBtn.setOnClickListener(onClickListener);
         rightLightBtn = view.findViewById(R.id.rightFragment_rightLight);
-//        rightLightBtn.setOnClickListener(onClickListener);
-        autoLightBtn = (Button) view.findViewById(R.id.rightFragment_autoLight);
-//        autoLightBtn.setOnClickListener(onClickListener);
+        rightLightBtn.setOnClickListener(onClickListener);
+        autoLightBtn = view.findViewById(R.id.rightFragment_autoLight);
+        autoLightBtn.setOnClickListener(onClickListener);
         coolAirBtn = view.findViewById(R.id.rightFragment_coolAir);
-//        coolAirBtn.setOnClickListener(onClickListener);
+        coolAirBtn.setOnClickListener(onClickListener);
         hotAirBtn = view.findViewById(R.id.rightFragment_hotAir);
-//        hotAirBtn.setOnClickListener(onClickListener);
+        hotAirBtn.setOnClickListener(onClickListener);
         offAirBtn = view.findViewById(R.id.rightFragment_offAir);
-//        offAirBtn.setOnClickListener(onClickListener);
+        offAirBtn.setOnClickListener(onClickListener);
         offAirBtn.setActivated(true);
-        deFogBtn = (ImageButton) view.findViewById(R.id.rightFragment_deFog);
-//        deFogBtn.setOnClickListener(onClickListener);
+        deFogBtn = view.findViewById(R.id.rightFragment_deFog);
+        deFogBtn.setOnClickListener(onClickListener);
         seekBar = view.findViewById(R.id.rightFragment_seekBar);
         seekBar.setEnabled(false);
         seekBar.setOnSeekBarChangeListener(onSeekBarChangeListener);
         seekBar.setOnTouchListener(onTouchListener);
-        rightFragmentDlClickBtn = (View) view.findViewById(R.id.rightFragment_dl_clickBtn);
-//        rightFragmentDlClickBtn.setOnClickListener(onClickListener);
+        rightFragmentDlClickBtn = view.findViewById(R.id.rightFragment_dl_clickBtn);
+        rightFragmentDlClickBtn.setOnClickListener(onClickListener);
     }
 
     /**
@@ -112,32 +135,34 @@ public class MainRightFragment extends Fragment {
     private SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//            LogUtil.d(TAG,String.valueOf(progress));
-//            if (fromUser) {
-//                if (progress >= 0 && progress < 10) {
-//                    seekBarIndex = AIR_GRADE_OFF;
-//                    finalProgress = 0;
-//                } else if (progress >= 10 && progress < 30) {
-//                    seekBarIndex = AIR_GRADE_FIRST_GEAR;
-//                    finalProgress = 20;
-//                } else if (progress >= 30 && progress < 50) {
-//                    seekBarIndex = AIR_GRADE_SECOND_GEAR;
-//                    finalProgress = 40;
-//                } else if (progress >= 50 && progress < 70) {
-//                    seekBarIndex = AIR_GRADE_THIRD_GEAR;
-//                    finalProgress = 60;
-//                } else if (progress >= 70 && progress < 90) {
-//                    seekBarIndex = AIR_GRADE_FOURTH_GEAR;
-//                    finalProgress = 80;
-//                } else if (progress >= 90 && progress <= 100) {
-//                    seekBarIndex = AIR_GRADE_FIVE_GEAR;
-//                    finalProgress = 100;
-//                }
-//                //发送最终数据至CAN(1-5档)
-//                activity.sendToCAN(canType, clazz, HMI_Dig_Ord_air_grade, seekBarIndex);
-//                // 风扇PWM占比控制信号
-//                activity.sendToCAN(canType, clazz, HMI_Dig_Ord_FANPWM_Control, progress);
-//            }
+            LogUtil.d(TAG,String.valueOf(progress));
+            if (fromUser) {
+                if (progress >= 0 && progress < 10) {
+                    seekBarIndex = 0;
+                    finalProgress = 0;
+                } else if (progress >= 10 && progress < 30) {
+                    seekBarIndex = 1;
+                    finalProgress = 20;
+                } else if (progress >= 30 && progress < 50) {
+                    seekBarIndex = 2;
+                    finalProgress = 40;
+                } else if (progress >= 50 && progress < 70) {
+                    seekBarIndex = 3;
+                    finalProgress = 60;
+                } else if (progress >= 70 && progress < 90) {
+                    seekBarIndex = 4;
+                    finalProgress = 80;
+                } else if (progress >= 90 && progress <= 100) {
+                    seekBarIndex = 5;
+                    finalProgress = 100;
+                }
+                //发送最终数据至CAN(1-5档)
+                App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), seekBarIndex);
+                // 风扇PWM占比控制信号
+                App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_FANPWM_Control.toString(), progress);
+                // 一起发送
+                App.getInstance().send_send(HMI.toString());
+            }
         }
 
         @Override
@@ -161,276 +186,187 @@ public class MainRightFragment extends Fragment {
     private CustomOnClickListener onClickListener = new CustomOnClickListener(200) {
         @Override
         protected void onSingleClick(View v) {
-//            switch (v.getId()) {
-//                case R.id.rightFragment_dl_clickBtn: {
-//                    activity.rightDrawerLayout.closeDrawer(Gravity.END);
-//                    break;
-//                }
-//                case R.id.rightFragment_lowBeam: {//近光灯
-//                    lowbeamBtn.setActivated(!lowbeamBtn.isActivated());
-//                    if (lowbeamBtn.isActivated()) {//点击后近光灯为开
-//                        highbeamBtn.setActivated(false);//远光灯关闭
-//                    }
-//                    typeFlag = true;
-//                    field = HMI_Dig_Ord_LowBeam;
-//                    o = transInt(lowbeamBtn.isActivated());
-//                    break;
-//                }
-//                case R.id.rightFragment_highBeam: {//远光灯
-//                    highbeamBtn.setActivated(!highbeamBtn.isActivated());
-//                    if (highbeamBtn.isActivated()) {//点击后远光灯为开
-//                        lowbeamBtn.setActivated(false);//近光灯关闭
-//                    }
-//                    typeFlag = true;
-//                    field = HMI_Dig_Ord_HighBeam;
-//                    o = transInt(highbeamBtn.isActivated());
-//                    break;
-//                }
-//                case R.id.rightFragment_frontFogLight: {//前雾灯开关
-//                    frontFogLightBtn.setActivated(!frontFogLightBtn.isActivated());
-//                    break;
-//                }
-//                case R.id.rightFragment_backFogLight: {//后雾灯
-//                    backFogLightBtn.setActivated(!backFogLightBtn.isActivated());
-//                    typeFlag = true;
-//                    field = HMI_Dig_Ord_RearFogLamp;
-//                    o = transInt(backFogLightBtn.isActivated());
-//                    break;
-//                }
-//                case R.id.rightFragment_leftLight: {//左转
-//                    leftLightBtn.setActivated(!leftLightBtn.isActivated());
-//                    if (leftLightBtn.isActivated()) {
-//                        rightLightBtn.setActivated(false);
-//                    }
-//                    typeFlag = true;
-//                    field = HMI_Dig_Ord_LeftTurningLamp;
-//                    o = transInt(leftLightBtn.isActivated());
-//                    break;
-//                }
-//                case R.id.rightFragment_rightLight: {//右转
-//                    rightLightBtn.setActivated(!rightLightBtn.isActivated());
-//                    if (rightLightBtn.isActivated()) {
-//                        leftLightBtn.setActivated(false);
-//                    }
-//                    typeFlag = true;
-//                    field = HMI_Dig_Ord_RightTurningLamp;
-//                    o = transInt(rightLightBtn.isActivated());
-//                    break;
-//                }
-//                case R.id.rightFragment_autoLight: {//自动灯
-//                    autoLightBtn.setActivated(!autoLightBtn.isActivated());
-//                    break;
-//                }
-//                case R.id.rightFragment_coolAir: {//冷气
-//                    coolAirBtn.setActivated(!coolAirBtn.isActivated());
-//                    if (coolAirBtn.isActivated()) {//冷气为开
-//                        seekBar.setEnabled(true);
-//                        hotAirBtn.setActivated(false);
-//                        offAirBtn.setActivated(false);
-//                    }
-//                    typeFlag = true;
-//                    field = HMI_Dig_Ord_air_model;
-//                    o = AIR_MODEL_COOL;//制冷模式
-//                    if (!coolAirBtn.isActivated() && !hotAirBtn.isActivated()) {//冷气暖气为关
-//                        o = ARI_MODEL_CLOSE;//关闭
-//                        seekBarIndex = AIR_GRADE_OFF;
-//                        offAirBtn.setActivated(true);
-//                        seekBar.setEnabled(false);
-//                        seekBar.setProgress(0);
-//                    }
-//                    break;
-//                }
-//                case R.id.rightFragment_hotAir: {//暖气
-//                    hotAirBtn.setActivated(!hotAirBtn.isActivated());
-//                    if (hotAirBtn.isActivated()) {//冷气为开
-//                        seekBar.setEnabled(true);
-//                        coolAirBtn.setActivated(false);
-//                        offAirBtn.setActivated(false);
-//                    }
-//                    typeFlag = true;
-//                    field = HMI_Dig_Ord_air_model;
-//                    o = AIR_MODEL_COOL;//制冷模式
-//                    if (!coolAirBtn.isActivated() && !hotAirBtn.isActivated()) {//冷气暖气为关
-//                        o = ARI_MODEL_CLOSE;//关闭
-//                        seekBarIndex = AIR_GRADE_OFF;
-//                        offAirBtn.setActivated(true);
-//                        seekBar.setEnabled(false);
-//                        seekBar.setProgress(0);
-//                    }
-//                    break;
-//                }
-//                case R.id.rightFragment_offAir: {//关闭
-//                    if (!offAirBtn.isActivated()) {
-//                        offAirBtn.setActivated(true);
-//                        coolAirBtn.setActivated(false);
-//                        hotAirBtn.setActivated(false);
-//                        seekBar.setEnabled(false);
-//                        seekBar.setProgress(0);
-//                        typeFlag = true;
-//                        seekBarIndex = AIR_GRADE_OFF;
-//                        field = HMI_Dig_Ord_air_model;//空调模式
-//                        o = ARI_MODEL_CLOSE;//关闭
-//                    }
-//                    break;
-//                }
-//                case R.id.rightFragment_deFog: {//除雾
-//                    deFogBtn.setActivated(!deFogBtn.isActivated());
-//                    typeFlag = true;
-//                    field = HMI_Dig_Ord_Demister_Control;//除雾控制
-//                    o = transInt(deFogBtn.isActivated());
-//                    break;
-//                }
-//                case R.id.rightFragment_errorLight: {//双闪
-//                    errorLightBtn.setActivated(!errorLightBtn.isActivated());
-//                    typeFlag = true;
-//                    field = HMI_Dig_Ord_DangerAlarm;
-//                    o = transInt(errorLightBtn.isActivated());
-//                    break;
-//                }
-//            }
-//            if (typeFlag) {//如果按钮被点击（有效）
-//                activity.sendToCAN(canType, clazz, field, o);
-//                if (field == HMI_Dig_Ord_air_model) {//如果当前是空调模式
-//                    activity.sendToCAN(canType, clazz, HMI_Dig_Ord_air_grade, seekBarIndex);//档位
-//                    if (ARI_MODEL_CLOSE == (int) o) {//空调关闭
-//                        // 风扇PWM占比控制信号
-//                        activity.sendToCAN(canType, clazz, HMI_Dig_Ord_FANPWM_Control, 0);
-//                    }
-//                }
-//                typeFlag = false;
-//            }
+            switch (v.getId()) {
+                case R.id.rightFragment_dl_clickBtn: {
+                    activity.rightDrawerLayout.closeDrawer(GravityCompat.END);
+                    break;
+                }
+                case R.id.rightFragment_lowBeam: {//近光灯
+                    lowbeamBtn.setActivated(!lowbeamBtn.isActivated());
+                    if (lowbeamBtn.isActivated()) {//点击后近光灯为开
+                        highbeamBtn.setActivated(false);//远光灯关闭
+                    }
+                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), transInt(lowbeamBtn.isActivated()));
+                    break;
+                }
+                case R.id.rightFragment_highBeam: {//远光灯
+                    highbeamBtn.setActivated(!highbeamBtn.isActivated());
+                    if (highbeamBtn.isActivated()) {//点击后远光灯为开
+                        lowbeamBtn.setActivated(false);//近光灯关闭
+                    }
+                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), transInt(highbeamBtn.isActivated()));
+                    break;
+                }
+                case R.id.rightFragment_frontFogLight: {//前雾灯开关
+                    frontFogLightBtn.setActivated(!frontFogLightBtn.isActivated());
+                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_FrontFogLamp.toString(), transInt(frontFogLightBtn.isActivated()));
+                    break;
+                }
+                case R.id.rightFragment_backFogLight: {//后雾灯
+                    backFogLightBtn.setActivated(!backFogLightBtn.isActivated());
+                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_RearFogLamp.toString(), transInt(backFogLightBtn.isActivated()));
+                    break;
+                }
+                case R.id.rightFragment_leftLight: {//左转
+                    leftLightBtn.setActivated(!leftLightBtn.isActivated());
+                    if (leftLightBtn.isActivated()) {
+                        rightLightBtn.setActivated(false);
+                    }
+                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_LeftTurningLamp.toString(), transInt(leftLightBtn.isActivated()));
+                    break;
+                }
+                case R.id.rightFragment_rightLight: {//右转
+                    rightLightBtn.setActivated(!rightLightBtn.isActivated());
+                    if (rightLightBtn.isActivated()) {
+                        leftLightBtn.setActivated(false);
+                    }
+                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_RightTurningLamp.toString(), transInt(rightLightBtn.isActivated()));
+                    break;
+                }
+                case R.id.rightFragment_coolAir: {//冷气
+                    coolAirBtn.setActivated(!coolAirBtn.isActivated());
+                    if (coolAirBtn.isActivated()) {//冷气为开
+                        seekBar.setEnabled(true);
+                        hotAirBtn.setActivated(false);
+                        offAirBtn.setActivated(false);
+                    }
+                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_model.toString(), transInt(coolAirBtn.isActivated()));
+                    if (!coolAirBtn.isActivated() && !hotAirBtn.isActivated()) {//冷气暖气为关
+                        App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_model.toString(), 2);
+                        App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), 0);
+                        offAirBtn.setActivated(true);
+                        seekBar.setEnabled(false);
+                        seekBar.setProgress(0);
+                    }
+                    break;
+                }
+                case R.id.rightFragment_hotAir: {//暖气
+                    hotAirBtn.setActivated(!hotAirBtn.isActivated());
+                    if (hotAirBtn.isActivated()) {//冷气为开
+                        seekBar.setEnabled(true);
+                        coolAirBtn.setActivated(false);
+                        offAirBtn.setActivated(false);
+                    }
+                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_model.toString(), transInt(hotAirBtn.isActivated()));
+                    if (!coolAirBtn.isActivated() && !hotAirBtn.isActivated()) {//冷气暖气为关
+                        App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_model.toString(), 2);
+                        App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), 0);
+                        offAirBtn.setActivated(true);
+                        seekBar.setEnabled(false);
+                        seekBar.setProgress(0);
+                    }
+                    break;
+                }
+                case R.id.rightFragment_offAir: {//关闭
+                    if (!offAirBtn.isActivated()) {
+                        offAirBtn.setActivated(true);
+                        coolAirBtn.setActivated(false);
+                        hotAirBtn.setActivated(false);
+                        seekBar.setEnabled(false);
+                        seekBar.setProgress(0);
+                        App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_model.toString(), 2);
+                        App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), 0);
+                    }
+                    break;
+                }
+                case R.id.rightFragment_deFog: {//除雾
+                    deFogBtn.setActivated(!deFogBtn.isActivated());
+                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_Demister_Control.toString(), transInt(deFogBtn.isActivated()));
+                    break;
+                }
+                case R.id.rightFragment_errorLight: {//双闪
+                    errorLightBtn.setActivated(!errorLightBtn.isActivated());
+                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_DangerAlarmLamp.toString(), transInt(errorLightBtn.isActivated()));
+                    break;
+                }
+            }
+            App.getInstance().send_send(HMI.toString());
         }
     };
 
-    /**
-     * 更新界面
-     *
-     * @param object 数据
-     */
-    public void refresh(JSONObject object) {
-        int id = object.getIntValue("id");
-        Object data = object.get("data");
-//        switch (id) {
-//            case BCM_Flg_Stat_LeftTurningLamp: {//左转
-//                boolean flag = (boolean) data;
-//                leftLightBtn.setActivated(flag);
-//                if (flag) {
-//                    rightLightBtn.setActivated(false);
-//                }
-//                break;
-//            }
-//            case BCM_Flg_Stat_RightTurningLamp: {//右转
-//                boolean flag = (boolean) data;
-//                rightLightBtn.setActivated(flag);
-//                if (flag) {
-//                    leftLightBtn.setActivated(false);
-//                }
-//                break;
-//            }
-//            case BCM_Flg_Stat_HighBeam: {//远光灯
-//                boolean flag = (boolean) data;
-//                highbeamBtn.setActivated(flag);
-//                if (flag) {
-//                    lowbeamBtn.setActivated(false);
-//                }
-//                break;
-//            }
-//            case BCM_Flg_Stat_LowBeam: {//近光灯
-//                boolean flag = (boolean) data;
-//                lowbeamBtn.setActivated(flag);
-//                if (flag) {
-//                    highbeamBtn.setActivated(false);
-//                }
-//                break;
-//            }
-//            case BCM_Flg_Stat_RearFogLamp: {//后雾灯
-//                boolean flag = (boolean) data;
-//                backFogLightBtn.setActivated(flag);
-//                break;
-//            }
-//            case BCM_Flg_Stat_DangerAlarmLamp: {// 双闪
-//                boolean flag = (boolean) data;
-//                errorLightBtn.setActivated(flag);
-//                break;
-//            }
-//            case BCM_DemisterStatus: {//除雾状态
-//                boolean flag = (boolean) data;
-//                deFogBtn.setActivated(flag);
-//                break;
-//            }
-//            case BCM_ACBlowingLevel: {//空调风量档位
-//                int index = object.getIntValue("data");//接收档位
-//                if (index != AIR_GRADE_SIX_GEAR) {
-//                    seekBarIndex = index;//当前档位
-//                    seekBar.setProgress(seekBarIndex * 20);//设置滑动条
-//                }
-//                break;
-//            }
-//            case VCU_ACWorkingStatus: {
-//                int flag = object.getIntValue("data");
-//                if (flag == 0) {//制冷
-//                    coolAirBtn.setActivated(true);
-//                    hotAirBtn.setActivated(false);
-//                    offAirBtn.setActivated(false);
-//                } else if (flag == 1) {//制热
-//                    coolAirBtn.setActivated(false);
-//                    hotAirBtn.setActivated(true);
-//                    offAirBtn.setActivated(false);
-//                } else if (flag == 2) {//均关闭
-//                    coolAirBtn.setActivated(false);
-//                    hotAirBtn.setActivated(false);
-//                    offAirBtn.setActivated(true);
-//                    seekBar.setEnabled(false);
-//                }
-//                break;
-//            }
-//        }
+
+    // 接收Server发来的指令
+    @Subscribe
+    public void messageEventBus(MessageWrap messageWrap) {
+        JSONObject jsonObject = JSON.parseObject(messageWrap.getMessage());
+        String action = jsonObject.getString("action");
+        if (action.equals("modify")) {
+            JSONObject data = jsonObject.getJSONObject("data");
+            String signal = data.getString("signal_name");
+            if (signal.equals(BCM_Flg_Stat_LeftTurningLamp.toString())) {//左转
+                int value = (int) data.getDoubleValue("value");
+                leftLightBtn.setActivated(value == 1);
+                if (value == 1) {
+                    rightLightBtn.setActivated(false);
+                }
+            } else if (signal.equals(BCM_Flg_Stat_RightTurningLamp.toString())) {//右转
+                int value = (int) data.getDoubleValue("value");
+                rightLightBtn.setActivated(value == 1);
+                if (value == 1) {
+                    leftLightBtn.setActivated(false);
+                }
+            } else if (signal.equals(BCM_Flg_Stat_HighBeam.toString())) {//远光灯
+                int value = (int) data.getDoubleValue("value");
+                highbeamBtn.setActivated(value == 1);
+                if (value == 1) {
+                    lowbeamBtn.setActivated(false);
+                }
+            } else if (signal.equals(BCM_Flg_Stat_LowBeam.toString())) {//近光灯
+                int value = (int) data.getDoubleValue("value");
+                lowbeamBtn.setActivated(value == 1);
+                if (value == 1) {
+                    highbeamBtn.setActivated(false);
+                }
+            } else if (signal.equals(BCM_Flg_Stat_RearFogLamp.toString())) {//后雾灯
+                int value = (int) data.getDoubleValue("value");
+                backFogLightBtn.setActivated(value == 1);
+            } else if (signal.equals(BCM_Flg_Stat_DangerAlarmLamp.toString())) {// 双闪
+                int value = (int) data.getDoubleValue("value");
+                errorLightBtn.setActivated(value == 1);
+            } else if (signal.equals(BCM_DemisterStatus.toString())) {//除雾状态
+                int value = (int) data.getDoubleValue("value");
+                deFogBtn.setActivated(value == 1);
+            } else if (signal.equals(BCM_ACBlowingLevel.toString())) {//空调风量档位
+                int value = (int) data.getDoubleValue("value");//接收档位
+                if (value != 6) {
+                    seekBarIndex = value;//当前档位
+                    seekBar.setProgress(seekBarIndex * 20);//设置滑动条
+                }
+            } else if (signal.equals(VCU_ACWorkingStatus.toString())) {
+                int value = (int) data.getDoubleValue("value");
+                if (value == 0) {//制冷
+                    coolAirBtn.setActivated(true);
+                    hotAirBtn.setActivated(false);
+                    offAirBtn.setActivated(false);
+                } else if (value == 1) {//制热
+                    coolAirBtn.setActivated(false);
+                    hotAirBtn.setActivated(true);
+                    offAirBtn.setActivated(false);
+                } else if (value == 2) {//均关闭
+                    coolAirBtn.setActivated(false);
+                    hotAirBtn.setActivated(false);
+                    offAirBtn.setActivated(true);
+                    seekBar.setEnabled(false);
+                }
+            }
+        }
     }
 
-    private BaseHandler rightHandler = new BaseHandler(this, new BaseHandler.HandlerCallback() {
-        @Override
-        public void handleMessage(Message msg) {
-            JSONObject object;
-            try {
-                object = (JSONObject) msg.obj;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return;
-            }
-            refresh(object);
-        }
-    });
-
-    /**
-     * 将boolean转换成int
-     *
-     * @param flag true/fasle
-     * @return 2/1
-     */
+    //将boolean转换成int
     private int transInt(boolean flag) {
         if (flag) {
             return 1;
         }
-        return 2;
-    }
-
-    /**
-     * 把int值转换成boolean {0x0:off,0x1:on}
-     *
-     * @param flag 1/0
-     * @return true/false
-     */
-    private boolean transBoolean(int flag) {
-        boolean data = false;
-        if (flag == 1) {
-            data = true;
-        }
-        return data;
-    }
-
-    public interface OnMainRightFragListener {
-        void onRelayIsOpen(boolean open);
-
-        void sendToCAN();
+        return 0;
     }
 }
