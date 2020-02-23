@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#000000</color>
+    <color name="login_activity_username_pwd_tv">#e6e3c8</color>
+    <color name="login_activity_board">#9df6f9</color>
+    <color name="login_activity_btn_pressed">#0c6b91</color>
+    <color name="main_activity_top_fragment_sharingvan_text">#292929</color>
+    <color name="main_activity_top_fragment_time_battery_text">#d6d5cc</color>
+    <color name="main_activity_show_fragment_view">#363637</color>
+    <color name="main_activity_show_fragment_chn_text">#888888</color>
+    <color name="main_activity_show_fragment_num_text">#cecece</color>
+    <color name="main_activity_down_fragment_btn">#ffffff</color>
+    <color name="main_activity_center_route_text">#cecece</color>
+</resources>

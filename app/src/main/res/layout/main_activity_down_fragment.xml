@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="640dp"
+    android:layout_height="46dp">
+    <!--远程驾驶-->
+    <Button
+        android:id="@+id/downFragment_longDrive_btn"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/main_activity_down_fragment_btn"
+        android:text="@string/default_longDrive"
+        android:textColor="@color/main_activity_down_fragment_btn"
+        android:textSize="13sp" />
+    <!--自动驾驶-->
+    <Button
+        android:id="@+id/downFragment_autoDrive_btn"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/main_activity_down_fragment_btn"
+        android:text="@string/default_autoDrive"
+        android:textColor="@color/main_activity_down_fragment_btn"
+        android:textSize="13sp" />
+    <!--待机状态-->
+    <Button
+        android:id="@+id/downFragment_await_btn"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/main_activity_down_fragment_btn"
+        android:text="@string/default_await"
+        android:textColor="@color/main_activity_down_fragment_btn"
+        android:textSize="13sp" />
+</LinearLayout>

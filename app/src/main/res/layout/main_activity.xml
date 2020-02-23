@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!--上大半部分-->
+    <RelativeLayout
+        android:id="@+id/main_activity_layout"
+        android:layout_width="match_parent"
+        android:layout_height="354dp"
+        android:background="@drawable/main_activity_bg">
+        <!--导航栏-->
+        <FrameLayout
+            android:id="@+id/main_activity_top_layout"
+            android:layout_width="match_parent"
+            android:layout_height="28dp">
+
+            <fragment
+                android:id="@+id/main_activity_top_fragment"
+                android:name="com.wubeibei.smartscreenphone.fragment.MainTopFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                tools:layout="@layout/main_activity_top_fragment" />
+        </FrameLayout>
+        <!--车速、电池温度...-->
+        <FrameLayout
+            android:id="@+id/main_activity_second_layout"
+            android:layout_width="match_parent"
+            android:layout_height="91dp"
+            android:layout_below="@id/main_activity_top_layout">
+
+            <fragment
+                android:id="@+id/main_activity_show_fragment"
+                android:name="com.wubeibei.smartscreenphone.fragment.MainShowFragment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                tools:layout="@layout/main_activity_show_fragment" />
+        </FrameLayout>
+        <!--中间地图灯光部分-->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="227dp"
+            android:layout_below="@id/main_activity_second_layout"
+            android:background="@drawable/wh_main_bg"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp">
+            <!--安全带报警-->
+            <FrameLayout
+                android:id="@+id/main_activity_center_seatsensor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </FrameLayout>
+            <!--灯光空调侧滑栏部分-->
+            <com.wubeibei.smartscreenphone.view.MyDrawerLayout
+                android:id="@+id/right_drawerLayout"
+                android:layout_width="match_parent"
+                android:layout_height="227dp"
+                android:layout_gravity="right|center_vertical">
+                <!--内容界面-->
+                <FrameLayout
+                    android:id="@+id/main_activity_center_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="227dp">
+
+                    <LinearLayout
+                        android:id="@+id/right_drawerLayout_click_btn"
+                        android:layout_width="20dp"
+                        android:layout_height="213dp"
+                        android:layout_gravity="right|center_vertical"
+                        android:background="@drawable/ic_click_btn_bg">
+
+                        <View
+                            android:layout_width="10dp"
+                            android:layout_height="44dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_arrows_left" />
+                    </LinearLayout>
+                </FrameLayout>
+                <!--侧滑栏-->
+                <fragment
+                    android:id="@+id/main_activity_right_fragment"
+                    android:name="com.wubeibei.smartscreenphone.fragment.MainRightFragment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    tools:layout="@layout/main_activity_right_fragment" />
+            </com.wubeibei.smartscreenphone.view.MyDrawerLayout>
+            <com.wubeibei.smartscreenphone.view.MyDrawerLayout
+                android:id="@+id/left_drawerLayout"
+                android:layout_width="222dp"
+                android:layout_height="227dp">
+
+                <!--左边路线显示部分-->
+                <FrameLayout
+                    android:layout_width="222dp"
+                    android:layout_height="match_parent">
+                    <!--路线-->
+                    <RelativeLayout
+                        android:layout_width="140dp"
+                        android:layout_height="16dp"
+                        android:layout_marginLeft="22dp"
+                        android:layout_marginTop="9dp"
+                        android:background="@drawable/main_activity_route_bg">
+
+                        <TextView
+                            android:id="@+id/main_activity_center_route_startSta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="7dp"
+                            android:text="T创实验室"
+                            android:textColor="@color/main_activity_center_route_text"
+                            android:textSize="8sp" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="15dp"
+                            android:layout_marginRight="15dp"
+                            android:layout_toLeftOf="@id/main_activity_center_route_endSta"
+                            android:layout_toRightOf="@id/main_activity_center_route_startSta"
+                            android:background="@drawable/main_activity_route_line" />
+
+                        <TextView
+                            android:id="@+id/main_activity_center_route_endSta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="7dp"
+                            android:text="一号设计楼"
+                            android:textColor="@color/main_activity_center_route_text"
+                            android:textSize="8sp" />
+                    </RelativeLayout>
+                    <!--行驶参数-->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="77dp"
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/main_activity_driveinfo_bg"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/driveInfo_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="22dp"
+                            android:layout_marginTop="12dp"
+                            android:text="行驶参数/STATISTICS"
+                            android:textColor="@color/main_activity_center_route_text"
+                            android:textSize="9sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/driveInfo_tv"
+                            android:layout_marginStart="22dp"
+                            android:layout_marginEnd="22dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/left_drawerLayout_click_btn"
+                        android:layout_width="20dp"
+                        android:layout_height="213dp"
+                        android:layout_gravity="left|center_vertical"
+                        android:background="@drawable/ic_click_btn_bg">
+
+                        <View
+                            android:layout_width="10dp"
+                            android:layout_height="44dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="10dp"
+                            android:background="@drawable/ic_arrows_right" />
+                    </LinearLayout>
+                </FrameLayout>
+
+                <fragment
+                    android:id="@+id/main_activity_left_fragment"
+                    android:layout_gravity="start"
+                    android:layout_width="94dp"
+                    android:layout_height="match_parent"
+                    android:name="com.wubeibei.smartscreenphone.fragment.MainLeftFragment"
+                    tools:layout="@layout/main_activity_left_fragment" />
+
+            </com.wubeibei.smartscreenphone.view.MyDrawerLayout>
+        </FrameLayout>
+    </RelativeLayout>
+    <!--最下边部分-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:layout_below="@id/main_activity_layout"
+        android:background="@drawable/main_activity_end_bg">
+
+        <fragment
+            android:id="@+id/main_activity_down_fragment"
+            android:name="com.wubeibei.smartscreenphone.fragment.MainDownFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="12.5dp"
+            android:layout_marginRight="12.5dp"
+            tools:layout="@layout/main_activity_down_fragment" />
+    </LinearLayout>
+</RelativeLayout>

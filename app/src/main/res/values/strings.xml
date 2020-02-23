@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">MiniBus主控屏(Pad版)</string>
+    <string name="login_activity_submit_btn">确认</string>
+    <string name="login_activity_username_tv">员工编号</string>
+    <string name="login_activity_password_tv">登陆密码</string>
+    <string name="login_success">登陆成功</string>
+    <string name="login_failed">登陆失败</string>
+    <string name="login_loading">正在登陆</string>
+    <string name="network_interrupt">网络已断开</string>
+    <string name="network_connect">网络已连接</string>
+    <string name="network_retry">网络异常，请稍后重试</string>
+    <string name="network_check">服务器连接异常，请检查网络</string>
+    <string name="default_speed">0.0</string>
+    <string name="default_temperature">0</string>
+    <string name="default_totalmile">0</string>
+    <string name="default_zonlic_chs">总里程</string>
+    <string name="default_zonlic_en">TOTAL MILEAGE</string>
+    <string name="default_unit_km">km</string>
+    <string name="default_taskprogress_chs">任务进度</string>
+    <string name="default_taskprogress_en">TASK PROGRESS</string>
+    <string name="default_rujd">0</string>
+    <string name="default_unit_p">%</string>
+    <string name="default_avg_speed_chs">平均时速</string>
+    <string name="default_avg_speed_en">AVERAGE SPEED</string>
+    <string name="default_avg_speed">0</string>
+    <string name="default_unit_km_h">km/h</string>
+    <string name="default_sharing_van">SHARING VAN</string>
+    <string name="default_battery">0%</string>
+    <string name="default_time">23:59</string>
+    <string name="default_longDrive">远程驾驶</string>
+    <string name="default_autoDrive">自动驾驶</string>
+    <string name="default_await">待机状态</string>
+</resources>

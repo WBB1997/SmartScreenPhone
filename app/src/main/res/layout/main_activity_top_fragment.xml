@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="640dp"
+    android:layout_height="28dp"
+    android:background="@drawable/main_activity_top_bg">
+    <!--中间字体-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/default_sharing_van"
+        android:textColor="@color/main_activity_top_fragment_sharingvan_text"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+    <!--左边信号、时间-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="21dp"
+        android:layout_marginStart="21dp">
+        <!--信号-->
+        <ImageView
+            android:id="@+id/topFragment_network_iv"
+            android:layout_width="13dp"
+            android:layout_height="12dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/ic_network_4" />
+        <!--时间-->
+        <TextView
+            android:id="@+id/topFragment_time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="9dp"
+            android:text="@string/default_time"
+            android:textColor="@color/main_activity_top_fragment_time_battery_text"
+            android:layout_marginStart="9dp" />
+    </LinearLayout>
+    <!--右边电量-->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical|right"
+        android:layout_marginRight="8dp"
+        android:layout_marginEnd="8dp"
+        tools:ignore="RtlHardcoded">
+
+        <ImageView
+            android:id="@+id/topFragment_battery_iv"
+            android:layout_width="28dp"
+            android:layout_height="10dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/ic_battery_1" />
+
+        <TextView
+            android:id="@+id/topFragment_battery_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
+            android:includeFontPadding="false"
+            android:text="@string/default_battery"
+            android:textColor="@color/main_activity_top_fragment_time_battery_text"
+            android:textSize="15sp" />
+    </LinearLayout>
+</FrameLayout>

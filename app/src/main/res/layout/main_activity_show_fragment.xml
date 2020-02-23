@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="640dp"
+    android:layout_height="91dp">
+    <!--时速、电池温度-->
+    <RelativeLayout
+        android:layout_width="245dp"
+        android:layout_height="65dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="20dp">
+
+        <RelativeLayout
+            android:layout_width="107dp"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true">
+
+            <ImageView
+                android:layout_width="107dp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:background="@drawable/speed_bg" />
+
+            <TextView
+                android:id="@+id/showFragment_speed_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="27dp"
+                android:layout_marginRight="30dp"
+                android:layout_centerHorizontal="true"
+                android:includeFontPadding="false"
+                android:text="@string/default_speed"
+                android:textColor="@color/main_activity_show_fragment_num_text"
+                android:textSize="21sp"
+                android:textStyle="italic"
+                android:layout_marginStart="27dp"
+                android:layout_marginEnd="30dp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="107dp"
+            android:layout_height="60dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true">
+
+            <ImageView
+                android:layout_width="107dp"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:background="@drawable/temperature_bg" />
+
+            <TextView
+                android:id="@+id/showFragment_temperature_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:layout_centerHorizontal="true"
+                android:text="@string/default_temperature"
+                android:textColor="@color/main_activity_show_fragment_num_text"
+                android:textSize="21sp"
+                android:textStyle="italic" />
+        </RelativeLayout>
+    </RelativeLayout>
+    <!--总里程、任务进度、平均时速-->
+    <LinearLayout
+        android:layout_width="330dp"
+        android:layout_height="53dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="25dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="25dp">
+        <!--总里程-->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@color/main_activity_show_fragment_view"
+                android:layout_alignParentStart="true" />
+
+            <LinearLayout
+                android:id="@+id/zonlic_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="21dp"
+                android:orientation="vertical"
+                android:layout_marginStart="21dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_zonlic_chs"
+                    android:textColor="@color/main_activity_show_fragment_chn_text"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_zonlic_en"
+                    android:textColor="@color/main_activity_show_fragment_chn_text"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/zonlic_layout"
+                android:layout_marginLeft="21dp"
+                android:layout_marginRight="21dp"
+                android:layout_marginTop="1dp"
+                android:orientation="horizontal"
+                android:layout_marginStart="21dp">
+
+                <TextView
+                    android:id="@+id/showFragment_totalOdmeter_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="@string/default_totalmile"
+                    android:ellipsize="end"
+                    android:textColor="@color/main_activity_show_fragment_num_text"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="@string/default_unit_km"
+                    android:textColor="@color/main_activity_show_fragment_num_text"
+                    android:textSize="10sp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+        </RelativeLayout>
+        <!--任务进度-->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@color/main_activity_show_fragment_view"
+                android:layout_alignParentStart="true" />
+
+            <LinearLayout
+                android:id="@+id/renwujd_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="21dp"
+                android:orientation="vertical"
+                android:layout_marginStart="21dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_taskprogress_chs"
+                    android:textColor="@color/main_activity_show_fragment_chn_text"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_taskprogress_en"
+                    android:textColor="@color/main_activity_show_fragment_chn_text"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/renwujd_layout"
+                android:layout_marginLeft="21dp"
+                android:layout_marginTop="1dp"
+                android:orientation="horizontal"
+                android:layout_marginStart="21dp">
+
+                <TextView
+                    android:id="@+id/showFragment_taskProgress_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="@string/default_rujd"
+                    android:ellipsize="end"
+                    android:textColor="@color/main_activity_show_fragment_num_text"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="@string/default_unit_p"
+                    android:textColor="@color/main_activity_show_fragment_num_text"
+                    android:textSize="10sp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+        </RelativeLayout>
+        <!--平均时速-->
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@color/main_activity_show_fragment_view"
+                android:layout_alignParentStart="true" />
+
+            <LinearLayout
+                android:id="@+id/avgspeed_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="21dp"
+                android:orientation="vertical"
+                android:layout_marginStart="21dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_avg_speed_chs"
+                    android:textColor="@color/main_activity_show_fragment_chn_text"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/default_avg_speed_en"
+                    android:textColor="@color/main_activity_show_fragment_chn_text"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/avgspeed_layout"
+                android:layout_marginLeft="21dp"
+                android:layout_marginTop="1dp"
+                android:orientation="horizontal"
+                android:layout_marginStart="21dp">
+
+                <TextView
+                    android:id="@+id/showFragment_avgSpeed_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:includeFontPadding="false"
+                    android:text="@string/default_avg_speed"
+                    android:ellipsize="end"
+                    android:textColor="@color/main_activity_show_fragment_num_text"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:text="@string/default_unit_km_h"
+                    android:textColor="@color/main_activity_show_fragment_num_text"
+                    android:textSize="10sp"
+                    android:layout_marginStart="8dp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--按压-->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <stroke android:width="0.3dp"
+                android:color="@color/login_activity_board"/>
+            <solid android:color="@color/login_activity_btn_pressed"/>
+            <corners android:radius="4dp"/>
+        </shape>
+    </item>
+    <!--没按压-->
+    <item android:state_pressed="false">
+        <shape android:shape="rectangle">
+            <stroke android:width="0.3dp"
+                android:color="@color/login_activity_board"/>
+            <solid android:color="@android:color/transparent"/>
+            <corners android:radius="4dp"/>
+        </shape>
+    </item>
+</selector>
