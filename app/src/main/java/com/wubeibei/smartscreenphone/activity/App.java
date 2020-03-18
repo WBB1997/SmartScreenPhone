@@ -65,12 +65,6 @@ public class App extends Application {
 
         // 注册监听器
         connectionManager.registerReceiver(new SocketActionAdapter(){
-            @Override
-            public void onSocketConnectionSuccess(ConnectionInfo info, String action) {
-                // 弹出提示框
-                App.showToast("网络连接成功");
-            }
-
             // 从服务器收到消息
             @Override
             public void onSocketReadResponse(ConnectionInfo info, String action, OriginalData data) {
@@ -83,6 +77,12 @@ public class App extends Application {
             public void onSocketWriteResponse(ConnectionInfo info, String action, ISendable data) {
                 LogUtil.d(TAG, action);
             }
+
+            @Override
+            public void onSocketDisconnection(ConnectionInfo info, String action, Exception e) {
+                JSONObject jsonObject = JSONObject.parseObject(e.getMessage());
+                App.showToast(jsonObject.getString("msg"));
+            }
         });
         connectionManager.connect();
     }
@@ -93,8 +93,18 @@ public class App extends Application {
             MessageWrap messageWrap = MessageWrap.get(message);
             connectionManager.send(messageWrap);
         }else {
-            App.showToast("暂无网络连接");
+            App.showToast("连接服务器中...");
         }
+    }
+
+    public void connect(){
+        connectionManager.connect();
+        App.showToast("连接服务器中...");
+    }
+
+    // 判断是否有网络连接
+    public boolean isConnection(){
+        return connectionManager.isConnect();
     }
 
     // 发送修改信号值数据
@@ -115,7 +125,7 @@ public class App extends Application {
                 App.showToast(e.getMessage());
             }
         }else {
-            App.showToast("暂无网络连接");
+            App.showToast("连接服务器中...");
         }
     }
 
@@ -137,7 +147,7 @@ public class App extends Application {
                 App.showToast(e.getMessage());
             }
         }else {
-            App.showToast("暂无网络连接");
+            App.showToast("连接服务器中...");
         }
     }
 
@@ -149,5 +159,11 @@ public class App extends Application {
 
     public static void showToast(final String msg) {
         Run.onUiSync(() -> Toast.makeText(instance, msg, Toast.LENGTH_SHORT).show());
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        connectionManager.disconnect();
     }
 }

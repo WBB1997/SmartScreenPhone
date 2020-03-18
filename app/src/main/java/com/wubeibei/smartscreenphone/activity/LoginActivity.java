@@ -17,7 +17,6 @@ import com.wubeibei.smartscreenphone.R;
 import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.dialog.CustomProgress;
 import com.wubeibei.smartscreenphone.util.ActivityCollector;
-import com.wubeibei.smartscreenphone.util.LogUtil;
 import com.wubeibei.smartscreenphone.util.ScreenAdapter;
 import com.wubeibei.smartscreenphone.view.CustomOnClickListener;
 
@@ -48,7 +47,7 @@ public class LoginActivity extends BaseActivity {
         //确认按钮
         Button submitBtn = findViewById(R.id.login_activity_submit_btn);
         submitBtn.setOnClickListener(onClickListener);
-        loginDialog = CustomProgress.getDialog(mContext, getResources().getString(R.string.login_loading), false, null);
+        loginDialog = CustomProgress.getDialog(mContext, getResources().getString(R.string.login_loading), true, null);
     }
 
     @Override
@@ -70,7 +69,7 @@ public class LoginActivity extends BaseActivity {
                         App.showToast("密码不能为空！");
                         return;
                     }
-                    if (!loginDialog.isShowing()) {
+                    if(App.getInstance().isConnection()) {
                         loginDialog.show();
                         JSONObject jsonObject = new JSONObject();
                         JSONObject data = new JSONObject();
@@ -78,8 +77,8 @@ public class LoginActivity extends BaseActivity {
                         jsonObject.put("action", "login");
                         jsonObject.put("data", data);
                         App.getInstance().send(jsonObject.toJSONString());
-                    } else {
-                        App.showToast(getResources().getString(R.string.network_retry));
+                    }else{
+                        App.getInstance().connect();
                     }
                     break;
                 }
@@ -88,15 +87,8 @@ public class LoginActivity extends BaseActivity {
     };
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        LogUtil.d(TAG, "onResume: ");
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        LogUtil.d(TAG, "onDestroy: ");
         // 取消EventBus
         EventBus.getDefault().unregister(this);
     }
@@ -120,8 +112,11 @@ public class LoginActivity extends BaseActivity {
             if (!flag) {
                 String msg = jsonObject.getString("msg");
                 App.showToast(msg);
+                if(loginDialog.isShowing())
+                    loginDialog.cancel();
             } else {
-                toActivity();
+                if (loginDialog.isShowing())
+                    toActivity();
             }
         }
     }

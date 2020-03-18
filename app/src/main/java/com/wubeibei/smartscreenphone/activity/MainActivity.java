@@ -18,11 +18,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.wubeibei.smartscreenphone.R;
-import com.wubeibei.smartscreenphone.fragment.MainDownFragment;
-import com.wubeibei.smartscreenphone.fragment.MainRightFragment;
-import com.wubeibei.smartscreenphone.fragment.MainSeatSensorFragment;
-import com.wubeibei.smartscreenphone.fragment.MainShowFragment;
-import com.wubeibei.smartscreenphone.fragment.MainTopFragment;
 import com.wubeibei.smartscreenphone.util.ActivityCollector;
 import com.wubeibei.smartscreenphone.util.ScreenAdapter;
 import com.wubeibei.smartscreenphone.view.CustomOnClickListener;
@@ -34,19 +29,12 @@ public class MainActivity extends BaseActivity{
     private static final String TAG = "MainActivity";
     private FragmentManager fragmentManager = null;
     private FragmentTransaction transaction = null;
-    private MainTopFragment topFragment = null;
-    private MainShowFragment showFragment = null;
-    private MainDownFragment downFragment = null;
-    private MainRightFragment rightFragment = null;
-    private MainSeatSensorFragment sensorFragment = null;
     private boolean autoDriveModel = false;//默认关闭自动驾驶模式
     public static boolean target = false;//默认没跳转
 //    private int currentDriveModel = DRIVE_MODEL_AUTO_AWAIT;//当前驾驶状态默认为待定
 //    private int clickDriveModel = DRIVE_MODEL_AUTO_AWAIT;//点击驾驶模式
-    private final int REQUEST_CODE = 1;//请求码
     public DrawerLayout rightDrawerLayout = null;
     private LinearLayout rightDLClickBtn = null;
-    private boolean isFirst = true;
     private long firstOnBackClickTime = 0;
 
     @Override
@@ -87,12 +75,6 @@ public class MainActivity extends BaseActivity{
 
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
-        topFragment = (MainTopFragment) fragmentManager.findFragmentById(R.id.main_activity_top_fragment);
-        showFragment = (MainShowFragment) fragmentManager.findFragmentById(R.id.main_activity_show_fragment);
-        downFragment = (MainDownFragment) fragmentManager.findFragmentById(R.id.main_activity_down_fragment);
-        rightFragment = (MainRightFragment) fragmentManager.findFragmentById(R.id.main_activity_right_fragment);
-        sensorFragment = new MainSeatSensorFragment();
-        transaction.add(R.id.main_activity_center_seatsensor, sensorFragment);
         transaction.commit();
     }
 

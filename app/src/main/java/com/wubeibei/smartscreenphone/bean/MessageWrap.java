@@ -6,7 +6,6 @@ import com.xuhao.didi.core.iocore.interfaces.ISendable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 
 public class MessageWrap implements ISendable {
 
