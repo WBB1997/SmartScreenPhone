@@ -76,7 +76,6 @@ public class App extends Application {
             public void onSocketReadResponse(ConnectionInfo info, String action, OriginalData data) {
                 byte[] bytes = data.getBodyBytes();
                 String string = new String(bytes);
-                LogUtil.d(TAG, string);
                 EventBus.getDefault().post(MessageWrap.get(string));
             }
 
@@ -92,7 +91,6 @@ public class App extends Application {
     public void send(String message){
         if (connectionManager.isConnect()) {
             MessageWrap messageWrap = MessageWrap.get(message);
-            LogUtil.d(TAG,message);
             connectionManager.send(messageWrap);
         }else {
             App.showToast("暂无网络连接");

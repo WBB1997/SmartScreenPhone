@@ -6,6 +6,7 @@ import com.xuhao.didi.core.iocore.interfaces.ISendable;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
 
 public class MessageWrap implements ISendable {
 
@@ -25,7 +26,7 @@ public class MessageWrap implements ISendable {
 
     @Override
     public byte[] parse() {
-        byte[] body = message.getBytes(Charset.defaultCharset());
+        byte[] body = message.getBytes(Charset.forName("UTF-8"));
         ByteBuffer bb = ByteBuffer.allocate(4 + body.length);
         bb.order(ByteOrder.BIG_ENDIAN);
         bb.putInt(body.length);
