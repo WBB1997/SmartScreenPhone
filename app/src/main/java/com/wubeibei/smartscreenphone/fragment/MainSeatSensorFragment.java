@@ -37,25 +37,27 @@ public class MainSeatSensorFragment extends Fragment {
     }
 
     public void refresh(int id, int data) {
-//        switch (id) {
-//            case BCM_Flg_Stat_BeltsSensor1: {//安全带传感器1
-//                left1.setVisibility(int2Visibility(data));
-//                break;
-//            }
-//            case BCM_Flg_Stat_BeltsSensor2: {//安全带传感器2
-//                left2.setVisibility(int2Visibility(data));
-//                break;
-//            }
-//            case BCM_Flg_Stat_BeltsSensor3: {//安全带传感器3
-//                right1.setVisibility(int2Visibility(data));
-//                break;
-//            }
-//            case BCM_Flg_Stat_BeltsSensor4: {//安全带传感器4
-//                right2.setVisibility(int2Visibility(data));
-//                break;
-//            }
-//        }
-        //
+
+/*
+        switch (id) {
+            case BCM_Flg_Stat_BeltsSensor1: {//安全带传感器1
+                left1.setVisibility(int2Visibility(data));
+                break;
+            }
+            case BCM_Flg_Stat_BeltsSensor2: {//安全带传感器2
+                left2.setVisibility(int2Visibility(data));
+                break;
+            }
+            case BCM_Flg_Stat_BeltsSensor3: {//安全带传感器3
+                right1.setVisibility(int2Visibility(data));
+                break;
+            }
+            case BCM_Flg_Stat_BeltsSensor4: {//安全带传感器4
+                right2.setVisibility(int2Visibility(data));
+                break;
+            }
+        }
+*/
         if(isVisibility()){//当前有安全带报警提醒
             centerSeatsensorLayout.setVisibility(View.VISIBLE);
         }else{

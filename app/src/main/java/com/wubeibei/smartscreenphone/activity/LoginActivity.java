@@ -18,10 +18,10 @@ import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.dialog.CustomProgress;
 import com.wubeibei.smartscreenphone.util.ActivityCollector;
 import com.wubeibei.smartscreenphone.util.LogUtil;
-import com.wubeibei.smartscreenphone.util.PreferencesUtil;
 import com.wubeibei.smartscreenphone.util.ScreenAdapter;
 import com.wubeibei.smartscreenphone.view.CustomOnClickListener;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import static com.wubeibei.smartscreenphone.util.ScreenAdapter.MATCH_BASE_HEIGHT;
@@ -31,7 +31,7 @@ import static com.wubeibei.smartscreenphone.util.ScreenAdapter.MATCH_UNIT_DP;
 public class LoginActivity extends BaseActivity {
     private static final String TAG = "LoginActivity";
     private Context mContext;
-    private EditText userNameEt, passWordEt;//用户名、密码输入框
+    private EditText passWordEt;//用户名、密码输入框
     private Dialog loginDialog = null;
     private boolean isFirst = true;//默认第一次调用该页面
     private boolean isShow = false;//默认不锁屏
@@ -44,12 +44,19 @@ public class LoginActivity extends BaseActivity {
         setContentView(R.layout.login_activity);
         this.mContext = this;
         isFirst = getIntent().getBooleanExtra("isFirst", true);
-        userNameEt = findViewById(R.id.login_activity_username_et);
         passWordEt = findViewById(R.id.login_activity_password_et);
         //确认按钮
         Button submitBtn = findViewById(R.id.login_activity_submit_btn);
         submitBtn.setOnClickListener(onClickListener);
         loginDialog = CustomProgress.getDialog(mContext, getResources().getString(R.string.login_loading), false, null);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
     private CustomOnClickListener onClickListener = new CustomOnClickListener(200) {
@@ -70,7 +77,6 @@ public class LoginActivity extends BaseActivity {
                         data.put("password", passWord);
                         jsonObject.put("action", "login");
                         jsonObject.put("data", data);
-                        LogUtil.d(TAG,jsonObject.toJSONString());
                         App.getInstance().send(jsonObject.toJSONString());
                     } else {
                         App.showToast(getResources().getString(R.string.network_retry));
@@ -91,6 +97,8 @@ public class LoginActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         LogUtil.d(TAG, "onDestroy: ");
+        // 取消EventBus
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

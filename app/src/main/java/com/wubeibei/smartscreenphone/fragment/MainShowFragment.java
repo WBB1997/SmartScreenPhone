@@ -21,6 +21,7 @@ import com.wubeibei.smartscreenphone.activity.App;
 import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.util.BaseHandler;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Locale;
@@ -60,7 +61,19 @@ public class MainShowFragment extends Fragment {
     public MainShowFragment() {
 
     }
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

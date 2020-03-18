@@ -9,7 +9,9 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.util.CrashHandler;
+import com.wubeibei.smartscreenphone.util.LogUtil;
 import com.wubeibei.smartscreenphone.util.ScreenAdapter;
+import com.xuhao.didi.core.iocore.interfaces.ISendable;
 import com.xuhao.didi.core.pojo.OriginalData;
 import com.xuhao.didi.core.protocol.IReaderProtocol;
 import com.xuhao.didi.socket.client.sdk.OkSocket;
@@ -28,7 +30,8 @@ import java.nio.ByteOrder;
 
 public class App extends Application {
     private static final String TAG = "App";
-    private static ConnectionInfo info = new ConnectionInfo("192.168.1.60", 5118);
+//    private static ConnectionInfo info = new ConnectionInfo("192.168.1.60", 5118);
+    private static ConnectionInfo info = new ConnectionInfo("10.0.2.2", 5118);
     private IConnectionManager connectionManager;
     private static App instance = null;
 
@@ -64,26 +67,32 @@ public class App extends Application {
         connectionManager.registerReceiver(new SocketActionAdapter(){
             @Override
             public void onSocketConnectionSuccess(ConnectionInfo info, String action) {
-                App.showToast("网络连接成功");
                 // 弹出提示框
+                App.showToast("网络连接成功");
             }
 
+            // 从服务器收到消息
             @Override
             public void onSocketReadResponse(ConnectionInfo info, String action, OriginalData data) {
                 byte[] bytes = data.getBodyBytes();
                 String string = new String(bytes);
+                LogUtil.d(TAG, string);
                 EventBus.getDefault().post(MessageWrap.get(string));
+            }
+
+            @Override
+            public void onSocketWriteResponse(ConnectionInfo info, String action, ISendable data) {
+                LogUtil.d(TAG, action);
             }
         });
         connectionManager.connect();
-        // 注册EventBus
-        EventBus.getDefault().register(this);
     }
 
-    // 普通的发送网络数据
+    // 发送普通网络数据
     public void send(String message){
         if (connectionManager.isConnect()) {
             MessageWrap messageWrap = MessageWrap.get(message);
+            LogUtil.d(TAG,message);
             connectionManager.send(messageWrap);
         }else {
             App.showToast("暂无网络连接");
@@ -134,25 +143,13 @@ public class App extends Application {
         }
     }
 
-    // 发送修改andSend数据
+    // 发送ModifyandSend数据
     public void send_modify_send(String msg_id, String signal_name, double value){
         send_modify(msg_id,signal_name,value);
         send_send(msg_id);
     }
 
-    @Override
-    public void onTerminate() {
-        super.onTerminate();
-        // 取消EventBus
-        EventBus.getDefault().unregister(this);
-    }
-
     public static void showToast(final String msg) {
         Run.onUiSync(() -> Toast.makeText(instance, msg, Toast.LENGTH_SHORT).show());
     }
-
-    public static void showToast(@StringRes int resId) {
-        showToast(instance.getString(resId));
-    }
-
 }

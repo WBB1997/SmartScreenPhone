@@ -28,6 +28,7 @@ import com.wubeibei.smartscreenphone.util.BaseHandler;
 import com.wubeibei.smartscreenphone.util.LogUtil;
 import com.wubeibei.smartscreenphone.view.CustomOnClickListener;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import static com.wubeibei.smartscreenphone.command.MessageName.HMI;
@@ -76,6 +77,21 @@ public class MainRightFragment extends Fragment {
     private int seekBarIndex = 0;//挡位大小
     private int finalProgress = 0;//最终大小
     private RelativeLayout rightLayout;
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     public void onAttach(Context context) {

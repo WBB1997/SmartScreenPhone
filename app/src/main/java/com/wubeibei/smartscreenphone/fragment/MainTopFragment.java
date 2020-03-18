@@ -19,6 +19,7 @@ import com.wubeibei.smartscreenphone.R;
 import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.util.BaseHandler;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.text.SimpleDateFormat;
@@ -40,6 +41,14 @@ public class MainTopFragment extends Fragment {
     private ImageView batteryIv;//电池图片
     private TextView batteryTv;//电池文字
     private TimeThread timeThread = null;//时间线程
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -66,6 +75,7 @@ public class MainTopFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         timeThread.setFlag(false);
+        EventBus.getDefault().unregister(this);
     }
 
     // 接收Server发来的指令

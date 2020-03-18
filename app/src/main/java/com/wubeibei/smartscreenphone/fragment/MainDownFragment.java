@@ -18,6 +18,7 @@ import com.wubeibei.smartscreenphone.activity.App;
 import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.view.CustomOnClickListener;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import static com.wubeibei.smartscreenphone.command.MessageName.HMI;
@@ -34,6 +35,20 @@ public class MainDownFragment extends Fragment {
     private int field = -1;//属性
     private Object o = null;//状态
     private boolean typeFlag = false;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 
     @Override
     public void onAttach(Context context) {

@@ -29,15 +29,15 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
 
-        new Thread() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(mContext, WelComeActivity.class);
-                    @SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(mContext, 0, intent, Intent.FLAG_ACTIVITY_NEW_TASK);
-                    AlarmManager mgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-                    mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, restartIntent);
-                    android.os.Process.killProcess(android.os.Process.myPid());
-                }
-            }.start();
+//        new Thread() {
+//                @Override
+//                public void run() {
+//                    Intent intent = new Intent(mContext, WelComeActivity.class);
+//                    @SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(mContext, 0, intent, Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    AlarmManager mgr = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+//                    mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, restartIntent);
+//                    android.os.Process.killProcess(android.os.Process.myPid());
+//                }
+//            }.start();
     }
 }
