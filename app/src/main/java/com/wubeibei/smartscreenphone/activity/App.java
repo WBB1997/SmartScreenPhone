@@ -3,8 +3,6 @@ package com.wubeibei.smartscreenphone.activity;
 import android.app.Application;
 import android.widget.Toast;
 
-import androidx.annotation.StringRes;
-
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.wubeibei.smartscreenphone.bean.MessageWrap;
@@ -65,6 +63,12 @@ public class App extends Application {
 
         // 注册监听器
         connectionManager.registerReceiver(new SocketActionAdapter(){
+
+            @Override
+            public void onSocketConnectionSuccess(ConnectionInfo info, String action) {
+                App.showToast("服务器连接成功");
+            }
+
             // 从服务器收到消息
             @Override
             public void onSocketReadResponse(ConnectionInfo info, String action, OriginalData data) {
@@ -73,16 +77,26 @@ public class App extends Application {
                 EventBus.getDefault().post(MessageWrap.get(string));
             }
 
+            // 发送消息回调
             @Override
             public void onSocketWriteResponse(ConnectionInfo info, String action, ISendable data) {
                 LogUtil.d(TAG, action);
             }
 
+            // 断开连接
             @Override
             public void onSocketDisconnection(ConnectionInfo info, String action, Exception e) {
-                JSONObject jsonObject = JSONObject.parseObject(e.getMessage());
-                App.showToast(jsonObject.getString("msg"));
+                String msg;
+                try {
+                    JSONObject jsonObject = JSONObject.parseObject(e.getMessage());
+                    msg = jsonObject.getString("msg");
+                }catch (Exception ignored){
+                    msg = "与服务器断开连接";
+                }
+                App.showToast(msg);
             }
+
+
         });
         connectionManager.connect();
     }
@@ -92,14 +106,11 @@ public class App extends Application {
         if (connectionManager.isConnect()) {
             MessageWrap messageWrap = MessageWrap.get(message);
             connectionManager.send(messageWrap);
-        }else {
-            App.showToast("连接服务器中...");
         }
     }
 
     public void connect(){
         connectionManager.connect();
-        App.showToast("连接服务器中...");
     }
 
     // 判断是否有网络连接
@@ -124,8 +135,6 @@ public class App extends Application {
                 e.printStackTrace();
                 App.showToast(e.getMessage());
             }
-        }else {
-            App.showToast("连接服务器中...");
         }
     }
 
@@ -146,8 +155,6 @@ public class App extends Application {
                 e.printStackTrace();
                 App.showToast(e.getMessage());
             }
-        }else {
-            App.showToast("连接服务器中...");
         }
     }
 
@@ -163,7 +170,8 @@ public class App extends Application {
 
     @Override
     public void onTerminate() {
-        super.onTerminate();
         connectionManager.disconnect();
+        LogUtil.d(TAG, String.valueOf(connectionManager.isConnect()));
+        super.onTerminate();
     }
 }

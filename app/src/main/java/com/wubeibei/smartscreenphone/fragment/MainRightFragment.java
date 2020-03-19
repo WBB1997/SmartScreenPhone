@@ -2,8 +2,6 @@ package com.wubeibei.smartscreenphone.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Message;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,7 +22,6 @@ import com.wubeibei.smartscreenphone.R;
 import com.wubeibei.smartscreenphone.activity.App;
 import com.wubeibei.smartscreenphone.activity.MainActivity;
 import com.wubeibei.smartscreenphone.bean.MessageWrap;
-import com.wubeibei.smartscreenphone.util.BaseHandler;
 import com.wubeibei.smartscreenphone.util.LogUtil;
 import com.wubeibei.smartscreenphone.view.CustomOnClickListener;
 
@@ -50,12 +47,10 @@ import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_RearF
 import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_RightTurningLamp;
 import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_air_grade;
 import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_air_model;
-import static com.wubeibei.smartscreenphone.command.SignalName.RCU_Dig_Ord_SystemStatus;
 import static com.wubeibei.smartscreenphone.command.SignalName.VCU_ACWorkingStatus;
 
 public class MainRightFragment extends Fragment {
     private static final String TAG = "MainRightFragment";
-    public final static int RIGHT_FRAGMENT = 3;
     private MainActivity activity;
     private ImageButton lowbeamBtn;//近光灯
     private ImageButton highbeamBtn;//远光灯
@@ -111,11 +106,9 @@ public class MainRightFragment extends Fragment {
         rightLayout = view.findViewById(R.id.main_activity_right_layout);
         rightLayout.getBackground().setAlpha(200);
         lowbeamBtn = view.findViewById(R.id.rightFragment_lowBeam);
-        lowbeamBtn.setEnabled(false);
         lowbeamBtn.setOnClickListener(onClickListener);
         highbeamBtn = view.findViewById(R.id.rightFragment_highBeam);
         highbeamBtn.setOnClickListener(onClickListener);
-        highbeamBtn.setEnabled(false);
         frontFogLightBtn = view.findViewById(R.id.rightFragment_frontFogLight);
         frontFogLightBtn.setOnClickListener(onClickListener);
         backFogLightBtn = view.findViewById(R.id.rightFragment_backFogLight);
@@ -202,6 +195,10 @@ public class MainRightFragment extends Fragment {
     private CustomOnClickListener onClickListener = new CustomOnClickListener(200) {
         @Override
         protected void onSingleClick(View v) {
+            if(!App.getInstance().isConnection()) {
+                App.showToast("连接服务器中...");
+                return;
+            }
             switch (v.getId()) {
                 case R.id.rightFragment_dl_clickBtn: {
                     activity.rightDrawerLayout.closeDrawer(GravityCompat.END);
@@ -360,19 +357,23 @@ public class MainRightFragment extends Fragment {
                 }
             } else if (signal.equals(VCU_ACWorkingStatus.toString())) {
                 int value = (int) data.getDoubleValue("value");
-                if (value == 0) {//制冷
-                    coolAirBtn.setActivated(true);
-                    hotAirBtn.setActivated(false);
-                    offAirBtn.setActivated(false);
-                } else if (value == 1) {//制热
-                    coolAirBtn.setActivated(false);
-                    hotAirBtn.setActivated(true);
-                    offAirBtn.setActivated(false);
-                } else if (value == 2) {//均关闭
-                    coolAirBtn.setActivated(false);
-                    hotAirBtn.setActivated(false);
-                    offAirBtn.setActivated(true);
-                    seekBar.setEnabled(false);
+                switch (value) {
+                    case 0: //制冷
+                        coolAirBtn.setActivated(true);
+                        hotAirBtn.setActivated(false);
+                        offAirBtn.setActivated(false);
+                        break;
+                    case 1: //制热
+                        coolAirBtn.setActivated(false);
+                        hotAirBtn.setActivated(true);
+                        offAirBtn.setActivated(false);
+                        break;
+                    case 2: //均关闭
+                        coolAirBtn.setActivated(false);
+                        hotAirBtn.setActivated(false);
+                        offAirBtn.setActivated(true);
+                        seekBar.setEnabled(false);
+                        break;
                 }
             }
         }

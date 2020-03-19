@@ -77,6 +77,10 @@ public class MainDownFragment extends Fragment {
     private CustomOnClickListener onClickListener = new CustomOnClickListener(200) {
         @Override
         public void onSingleClick(View v) {
+            if(!App.getInstance().isConnection()) {
+                App.showToast("连接服务器中...");
+                return;
+            }
             switch (v.getId()) {
                 case R.id.downFragment_longDrive_btn: {
                     App.getInstance().send_modify_send(HMI.toString(), HMI_Dig_Ord_Driver_model.toString(), 1);

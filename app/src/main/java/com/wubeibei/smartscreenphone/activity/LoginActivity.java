@@ -78,6 +78,7 @@ public class LoginActivity extends BaseActivity {
                         jsonObject.put("data", data);
                         App.getInstance().send(jsonObject.toJSONString());
                     }else{
+                        App.showToast("连接服务器中...");
                         App.getInstance().connect();
                     }
                     break;
