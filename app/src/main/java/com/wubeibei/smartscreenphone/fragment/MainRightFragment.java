@@ -195,10 +195,6 @@ public class MainRightFragment extends Fragment {
     private CustomOnClickListener onClickListener = new CustomOnClickListener(200) {
         @Override
         protected void onSingleClick(View v) {
-            if(!App.getInstance().isConnection()) {
-                App.showToast("连接服务器中...");
-                return;
-            }
             switch (v.getId()) {
                 case R.id.rightFragment_dl_clickBtn: {
                     activity.rightDrawerLayout.closeDrawer(GravityCompat.END);

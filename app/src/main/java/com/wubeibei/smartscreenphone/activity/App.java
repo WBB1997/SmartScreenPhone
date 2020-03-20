@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.util.CrashHandler;
-import com.wubeibei.smartscreenphone.util.LogUtil;
 import com.wubeibei.smartscreenphone.util.ScreenAdapter;
 import com.xuhao.didi.core.iocore.interfaces.ISendable;
 import com.xuhao.didi.core.pojo.OriginalData;
@@ -29,6 +28,7 @@ import java.nio.ByteOrder;
 public class App extends Application {
     private static final String TAG = "App";
 //    private static ConnectionInfo info = new ConnectionInfo("192.168.1.60", 5118);
+//    private static ConnectionInfo info = new ConnectionInfo("192.168.0.100", 5118);
     private static ConnectionInfo info = new ConnectionInfo("10.0.2.2", 5118);
     private IConnectionManager connectionManager;
     private static App instance = null;
@@ -58,47 +58,42 @@ public class App extends Application {
                 return byteBuffer.getInt();
             }
         });
+
         //将新的修改后的参配设置给连接管理器
         connectionManager.option(okOptionsBuilder.build());
 
         // 注册监听器
         connectionManager.registerReceiver(new SocketActionAdapter(){
-
             @Override
             public void onSocketConnectionSuccess(ConnectionInfo info, String action) {
-                App.showToast("服务器连接成功");
+                App.showToast(action);
             }
 
             // 从服务器收到消息
             @Override
             public void onSocketReadResponse(ConnectionInfo info, String action, OriginalData data) {
-                byte[] bytes = data.getBodyBytes();
-                String string = new String(bytes);
-                EventBus.getDefault().post(MessageWrap.get(string));
+                receivingHandler(info, action, data);
             }
 
             // 发送消息回调
             @Override
             public void onSocketWriteResponse(ConnectionInfo info, String action, ISendable data) {
-                LogUtil.d(TAG, action);
             }
 
             // 断开连接
             @Override
             public void onSocketDisconnection(ConnectionInfo info, String action, Exception e) {
-                String msg;
-                try {
-                    JSONObject jsonObject = JSONObject.parseObject(e.getMessage());
-                    msg = jsonObject.getString("msg");
-                }catch (Exception ignored){
-                    msg = "与服务器断开连接";
-                }
-                App.showToast(msg);
+                App.showToast(action);
             }
-
-
         });
-        connectionManager.connect();
+    }
+
+    // 接收服务器发来的消息
+    private void receivingHandler(ConnectionInfo info, String action, OriginalData data) {
+        byte[] bytes = data.getBodyBytes();
+        String string = new String(bytes);
+        //转发给其他模块
+        EventBus.getDefault().post(MessageWrap.get(string));
     }
 
     // 发送普通网络数据
@@ -106,9 +101,12 @@ public class App extends Application {
         if (connectionManager.isConnect()) {
             MessageWrap messageWrap = MessageWrap.get(message);
             connectionManager.send(messageWrap);
+        }else{
+            App.showToast("网络连接错误，请检查网络连接");
         }
     }
 
+    // 连接服务器
     public void connect(){
         connectionManager.connect();
     }
@@ -135,6 +133,8 @@ public class App extends Application {
                 e.printStackTrace();
                 App.showToast(e.getMessage());
             }
+        }else{
+            App.showToast("网络连接错误，请检查网络连接");
         }
     }
 
@@ -155,6 +155,8 @@ public class App extends Application {
                 e.printStackTrace();
                 App.showToast(e.getMessage());
             }
+        }else {
+            App.showToast("网络连接错误，请检查网络连接");
         }
     }
 
@@ -171,7 +173,6 @@ public class App extends Application {
     @Override
     public void onTerminate() {
         connectionManager.disconnect();
-        LogUtil.d(TAG, String.valueOf(connectionManager.isConnect()));
         super.onTerminate();
     }
 }

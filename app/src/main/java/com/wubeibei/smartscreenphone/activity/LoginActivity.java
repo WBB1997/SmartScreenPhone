@@ -29,25 +29,23 @@ import static com.wubeibei.smartscreenphone.util.ScreenAdapter.MATCH_UNIT_DP;
 
 public class LoginActivity extends BaseActivity {
     private static final String TAG = "LoginActivity";
-    private Context mContext;
     private EditText passWordEt;//用户名、密码输入框
     private Dialog loginDialog = null;
     private boolean isFirst = true;//默认第一次调用该页面
     private boolean isShow = false;//默认不锁屏
-    private boolean loginFlag = false;//默认登陆失败
+    private boolean loginFlag = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ScreenAdapter.match(this, 400, MATCH_BASE_HEIGHT, MATCH_UNIT_DP);
         setContentView(R.layout.login_activity);
-        this.mContext = this;
         isFirst = getIntent().getBooleanExtra("isFirst", true);
         passWordEt = findViewById(R.id.login_activity_password_et);
         //确认按钮
         Button submitBtn = findViewById(R.id.login_activity_submit_btn);
         submitBtn.setOnClickListener(onClickListener);
-        loginDialog = CustomProgress.getDialog(mContext, getResources().getString(R.string.login_loading), true, null);
+        loginDialog = CustomProgress.getDialog(this, getResources().getString(R.string.login_loading), true, null);
     }
 
     @Override
@@ -69,18 +67,19 @@ public class LoginActivity extends BaseActivity {
                         App.showToast("密码不能为空！");
                         return;
                     }
-                    if(App.getInstance().isConnection()) {
-                        loginDialog.show();
-                        JSONObject jsonObject = new JSONObject();
-                        JSONObject data = new JSONObject();
-                        data.put("password", passWord);
-                        jsonObject.put("action", "login");
-                        jsonObject.put("data", data);
-                        App.getInstance().send(jsonObject.toJSONString());
-                    }else{
-                        App.showToast("连接服务器中...");
+                    // 如果网络未连接
+                    if (!App.getInstance().isConnection())
                         App.getInstance().connect();
-                    }
+                    // 打开加载界面
+                    loginDialog.show();
+                    // 构造发送的数据
+                    JSONObject jsonObject = new JSONObject();
+                    JSONObject data = new JSONObject();
+                    data.put("password", passWord);
+                    jsonObject.put("action", "login");
+                    jsonObject.put("data", data);
+                    // 发送
+                    App.getInstance().send(jsonObject.toJSONString());
                     break;
                 }
             }
@@ -103,7 +102,7 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    // 接收Client发来的指令
+    // 接收服务器发来的指令
     @Subscribe
     public void messageEventBus(MessageWrap messageWrap) {
         JSONObject jsonObject = JSON.parseObject(messageWrap.getMessage());

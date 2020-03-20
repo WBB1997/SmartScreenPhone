@@ -1,14 +1,18 @@
 package com.wubeibei.smartscreenphone.activity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
@@ -17,10 +21,20 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.wubeibei.smartscreenphone.R;
+import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.util.ActivityCollector;
+import com.wubeibei.smartscreenphone.util.LogUtil;
 import com.wubeibei.smartscreenphone.util.ScreenAdapter;
+import com.wubeibei.smartscreenphone.view.CommonDialog;
 import com.wubeibei.smartscreenphone.view.CustomOnClickListener;
+
+import net.qiujuer.genius.kit.handler.Run;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import static com.wubeibei.smartscreenphone.util.ScreenAdapter.MATCH_BASE_HEIGHT;
 import static com.wubeibei.smartscreenphone.util.ScreenAdapter.MATCH_UNIT_DP;
@@ -43,7 +57,6 @@ public class MainActivity extends BaseActivity{
         ScreenAdapter.match(this, 400, MATCH_BASE_HEIGHT, MATCH_UNIT_DP);
         setContentView(R.layout.main_activity);
         initView();
-        initClass();
         //申请相关权限
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -54,17 +67,12 @@ public class MainActivity extends BaseActivity{
             }
         }
         //有权限的话什么都不做
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
     }
 
-    /**
-     * 初始化相关类
-     */
-    private void initClass() {
-    }
-
-    /**
-     * 初始化布局
-     */
+    //初始化布局
     private void initView() {
         rightDrawerLayout = findViewById(R.id.right_drawerLayout);
         rightDrawerLayout.setScrimColor(Color.TRANSPARENT);
@@ -78,9 +86,45 @@ public class MainActivity extends BaseActivity{
         transaction.commit();
     }
 
+    // 接收Server发来的指令
+    @Subscribe
+    public void messageEventBus(MessageWrap messageWrap) {
+        JSONObject jsonObject = JSON.parseObject(messageWrap.getMessage());
+        String action = jsonObject.getString("action");
+        LogUtil.d(TAG, jsonObject.toJSONString());
+        if (action.equals("message")) {
+            int status = jsonObject.getIntValue("status");
+            switch (status) {
+                // 弹出提示框，是否重新登录或者退出程序
+                case 0:
+                    Run.onUiSync(() ->showDialog(MainActivity.this, jsonObject.getString("msg")));
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    //弹出对话框
+    private void showDialog(@NonNull Context context, @NonNull String str) {
+        final CommonDialog dialog = new CommonDialog(context);
+        dialog.setMessage(str).setNegtive("重新登录")
+                .setPositive("退出")
+                .setSingle(false).setOnClickBottomListener(new CommonDialog.OnClickBottomListener() {
+            @Override
+            public void onPositiveClick() {
+                App.showToast("退出");
+            }
+
+            @Override
+            public void onNegtiveClick() {
+                App.showToast("重新登陆");
+            }
+        }).show();
+    }
+
     /**
      * 对特定Fragment进行隐藏或显示
-     *
      * @param fragment Fragment
      * @param flag     是否隐藏
      */
@@ -146,5 +190,11 @@ public class MainActivity extends BaseActivity{
                 }
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }

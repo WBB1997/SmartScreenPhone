@@ -100,7 +100,7 @@ public class MainShowFragment extends Fragment {
         showTotalMile(totalMile);
     }
 
-    // 接收Server发来的指令
+    // 接收服务器发来的指令
     @Subscribe
     public void messageEventBus(MessageWrap messageWrap) {
         JSONObject jsonObject = JSON.parseObject(messageWrap.getMessage());

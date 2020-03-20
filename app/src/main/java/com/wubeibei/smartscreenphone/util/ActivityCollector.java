@@ -4,14 +4,17 @@ import android.app.Activity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class ActivityCollector {
-    private static List<Activity> activities = new ArrayList<>();
+    private static Stack<Activity> activities = new Stack<>();
 
+    // 创建一个Activity时自动调用
     public static void addActivity(Activity activity){
         activities.add(activity);
     }
 
+    //销毁一个Activity时自动调用
     public static void removeActivity(Activity activity){
         activities.remove(activity);
     }
