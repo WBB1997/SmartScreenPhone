@@ -16,13 +16,14 @@ public class BaseActivity extends FragmentActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("BaseActivity",getClass().getSimpleName());
+        Log.d("Create ",getClass().getSimpleName());
         ActivityCollector.addActivity(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d("Destroy ",getClass().getSimpleName());
         ActivityCollector.removeActivity(this);
     }
 }

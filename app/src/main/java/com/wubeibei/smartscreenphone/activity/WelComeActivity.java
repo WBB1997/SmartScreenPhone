@@ -21,6 +21,11 @@ public class WelComeActivity extends BaseActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        // 阻止返回键
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return keyCode == KeyEvent.KEYCODE_BACK;
     }

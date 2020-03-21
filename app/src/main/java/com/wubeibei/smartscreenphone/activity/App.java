@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.util.CrashHandler;
+import com.wubeibei.smartscreenphone.util.LogUtil;
 import com.wubeibei.smartscreenphone.util.ScreenAdapter;
 import com.xuhao.didi.core.iocore.interfaces.ISendable;
 import com.xuhao.didi.core.pojo.OriginalData;
@@ -32,6 +33,7 @@ public class App extends Application {
     private static ConnectionInfo info = new ConnectionInfo("10.0.2.2", 5118);
     private IConnectionManager connectionManager;
     private static App instance = null;
+    private boolean login = false; // 是否登录
 
     public static App getInstance(){
         return instance;
@@ -67,6 +69,12 @@ public class App extends Application {
             @Override
             public void onSocketConnectionSuccess(ConnectionInfo info, String action) {
                 App.showToast(action);
+                // 如果已经登录过了，重连时就发送重新登陆指令
+                if(login){
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("action","relogin");
+                    send(jsonObject.toJSONString());
+                }
             }
 
             // 从服务器收到消息
@@ -86,12 +94,14 @@ public class App extends Application {
                 App.showToast(action);
             }
         });
+        connectionManager.connect();
     }
 
     // 接收服务器发来的消息
     private void receivingHandler(ConnectionInfo info, String action, OriginalData data) {
         byte[] bytes = data.getBodyBytes();
         String string = new String(bytes);
+        LogUtil.d(TAG, string);
         //转发给其他模块
         EventBus.getDefault().post(MessageWrap.get(string));
     }
@@ -158,6 +168,7 @@ public class App extends Application {
         }else {
             App.showToast("网络连接错误，请检查网络连接");
         }
+        connectionManager.connect();
     }
 
     // 发送ModifyandSend数据
@@ -166,8 +177,17 @@ public class App extends Application {
         send_send(msg_id);
     }
 
+    // 弹出提示框
     public static void showToast(final String msg) {
         Run.onUiSync(() -> Toast.makeText(instance, msg, Toast.LENGTH_SHORT).show());
+    }
+
+    public boolean isLogin() {
+        return login;
+    }
+
+    public void setLogin(boolean login) {
+        this.login = login;
     }
 
     @Override

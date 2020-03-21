@@ -1,7 +1,6 @@
 package com.wubeibei.smartscreenphone.activity;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -31,16 +30,13 @@ public class LoginActivity extends BaseActivity {
     private static final String TAG = "LoginActivity";
     private EditText passWordEt;//用户名、密码输入框
     private Dialog loginDialog = null;
-    private boolean isFirst = true;//默认第一次调用该页面
-    private boolean isShow = false;//默认不锁屏
-    private boolean loginFlag = false;
+    private long firstOnBackClickTime;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ScreenAdapter.match(this, 400, MATCH_BASE_HEIGHT, MATCH_UNIT_DP);
         setContentView(R.layout.login_activity);
-        isFirst = getIntent().getBooleanExtra("isFirst", true);
         passWordEt = findViewById(R.id.login_activity_password_et);
         //确认按钮
         Button submitBtn = findViewById(R.id.login_activity_submit_btn);
@@ -68,18 +64,21 @@ public class LoginActivity extends BaseActivity {
                         return;
                     }
                     // 如果网络未连接
-                    if (!App.getInstance().isConnection())
+                    if (App.getInstance().isConnection()) {
+                        // 打开加载界面
+                        loginDialog.show();
+                        // 构造发送的数据
+                        JSONObject jsonObject = new JSONObject();
+                        JSONObject data = new JSONObject();
+                        data.put("password", passWord);
+                        jsonObject.put("action", "login");
+                        jsonObject.put("data", data);
+                        // 发送
+                        App.getInstance().send(jsonObject.toJSONString());
+                    }else {
                         App.getInstance().connect();
-                    // 打开加载界面
-                    loginDialog.show();
-                    // 构造发送的数据
-                    JSONObject jsonObject = new JSONObject();
-                    JSONObject data = new JSONObject();
-                    data.put("password", passWord);
-                    jsonObject.put("action", "login");
-                    jsonObject.put("data", data);
-                    // 发送
-                    App.getInstance().send(jsonObject.toJSONString());
+                        App.showToast("网络连接错误，请稍后再试！");
+                    }
                     break;
                 }
             }
@@ -95,8 +94,11 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        if (isFirst) {//第一次登陆有效
+        long secondOnBackClickTime = System.currentTimeMillis();
+        if (secondOnBackClickTime - firstOnBackClickTime > 2000) {
+            App.showToast("再按一次返回键退出");
+            firstOnBackClickTime = System.currentTimeMillis();
+        } else {
             ActivityCollector.finishAll();
             System.exit(1);
         }
@@ -109,28 +111,25 @@ public class LoginActivity extends BaseActivity {
         String action = jsonObject.getString("action");
         if (action.equals("login")) {
             boolean flag = jsonObject.getBooleanValue("data");
+            // 登录失败
             if (!flag) {
                 String msg = jsonObject.getString("msg");
                 App.showToast(msg);
                 if(loginDialog.isShowing())
                     loginDialog.cancel();
+                // 登录成功
             } else {
-                if (loginDialog.isShowing())
+                if (loginDialog.isShowing()) {
                     toActivity();
+                    App.getInstance().setLogin(true);
+                    loginDialog.cancel();
+                }
             }
         }
     }
 
     private void toActivity() {
-        if (!isFirst) {
-            Intent i = new Intent();
-            i.putExtra("isShow",isShow);
-            i.putExtra("loginFlag", loginFlag);
-            setResult(RESULT_OK, i);
-            finish();
-        } else {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 }

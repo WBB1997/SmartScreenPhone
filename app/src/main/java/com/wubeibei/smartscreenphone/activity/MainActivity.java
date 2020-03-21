@@ -2,10 +2,13 @@ package com.wubeibei.smartscreenphone.activity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -86,7 +89,7 @@ public class MainActivity extends BaseActivity{
         transaction.commit();
     }
 
-    // 接收Server发来的指令
+    // 接收服务器发来的指令
     @Subscribe
     public void messageEventBus(MessageWrap messageWrap) {
         JSONObject jsonObject = JSON.parseObject(messageWrap.getMessage());
@@ -110,17 +113,27 @@ public class MainActivity extends BaseActivity{
         final CommonDialog dialog = new CommonDialog(context);
         dialog.setMessage(str).setNegtive("重新登录")
                 .setPositive("退出")
-                .setSingle(false).setOnClickBottomListener(new CommonDialog.OnClickBottomListener() {
+                .setSingle(false)
+                .setOnClickBottomListener(new CommonDialog.OnClickBottomListener() {
             @Override
             public void onPositiveClick() {
-                App.showToast("退出");
+                //退出程序
+                ActivityCollector.finishAll();
+                System.exit(1);
             }
-
             @Override
             public void onNegtiveClick() {
-                App.showToast("重新登陆");
+                // 重新登录
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+                App.getInstance().setLogin(false);
+                dialog.cancel();
             }
-        }).show();
+        })
+                // 屏蔽弹出框的返回键
+                .setOnKeyListener((dialogInterface, i, keyEvent) -> i == KeyEvent.KEYCODE_BACK && keyEvent.getRepeatCount() == 0);
+        dialog.show();
     }
 
     /**
