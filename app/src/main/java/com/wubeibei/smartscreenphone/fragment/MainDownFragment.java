@@ -31,7 +31,6 @@ public class MainDownFragment extends Fragment {
     private Button longDriveBtn = null;//远程驾驶
     private Button autoDriveBtn = null;//自动驾驶
     private Button awaitBtn = null;//待机状态
-    private final String clazz = "HMI";//所属类名
     private int field = -1;//属性
     private Object o = null;//状态
     private boolean typeFlag = false;
@@ -79,17 +78,17 @@ public class MainDownFragment extends Fragment {
         public void onSingleClick(View v) {
             switch (v.getId()) {
                 case R.id.downFragment_longDrive_btn: {
-                    App.getInstance().send_modify_send(HMI.toString(), HMI_Dig_Ord_Driver_model.toString(), 1);
+                    App.getInstance().modifysendcommand(HMI.toString(), HMI_Dig_Ord_Driver_model.toString(), 1);
                     changeType(true, false, false);
                     break;
                 }
                 case R.id.downFragment_autoDrive_btn: {
-                    App.getInstance().send_modify_send(HMI.toString(), HMI_Dig_Ord_Driver_model.toString(), 0);
+                    App.getInstance().modifysendcommand(HMI.toString(), HMI_Dig_Ord_Driver_model.toString(), 0);
                     changeType(false, true, false);
                     break;
                 }
                 case R.id.downFragment_await_btn: {
-                    App.getInstance().send_send(HMI.toString());
+                    App.getInstance().sendCommand(HMI.toString());
                     changeType(false, false, true);
                     break;
                 }

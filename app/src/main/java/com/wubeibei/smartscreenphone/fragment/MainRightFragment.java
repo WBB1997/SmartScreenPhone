@@ -41,6 +41,7 @@ import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_Dange
 import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_Demister_Control;
 import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_FANPWM_Control;
 import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_FrontFogLamp;
+import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_HighBeam;
 import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_LeftTurningLamp;
 import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_LoWBeam;
 import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_RearFogLamp;
@@ -166,11 +167,11 @@ public class MainRightFragment extends Fragment {
                     finalProgress = 100;
                 }
                 //发送最终数据至CAN(1-5档)
-                App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), seekBarIndex);
+                App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), seekBarIndex);
                 // 风扇PWM占比控制信号
-                App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_FANPWM_Control.toString(), progress);
+                App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_FANPWM_Control.toString(), progress);
                 // 一起发送
-                App.getInstance().send_send(HMI.toString());
+                App.getInstance().sendCommand(HMI.toString());
             }
         }
 
@@ -204,42 +205,46 @@ public class MainRightFragment extends Fragment {
                     lowbeamBtn.setActivated(!lowbeamBtn.isActivated());
                     if (lowbeamBtn.isActivated()) {//点击后近光灯为开
                         highbeamBtn.setActivated(false);//远光灯关闭
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_HighBeam.toString(), transInt(highbeamBtn.isActivated()) + 1);
                     }
-                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), transInt(lowbeamBtn.isActivated()));
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), transInt(lowbeamBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_highBeam: {//远光灯
                     highbeamBtn.setActivated(!highbeamBtn.isActivated());
                     if (highbeamBtn.isActivated()) {//点击后远光灯为开
                         lowbeamBtn.setActivated(false);//近光灯关闭
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), transInt(lowbeamBtn.isActivated()) + 1);
                     }
-                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), transInt(highbeamBtn.isActivated()));
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), transInt(highbeamBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_frontFogLight: {//前雾灯开关
                     frontFogLightBtn.setActivated(!frontFogLightBtn.isActivated());
-                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_FrontFogLamp.toString(), transInt(frontFogLightBtn.isActivated()));
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_FrontFogLamp.toString(), transInt(frontFogLightBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_backFogLight: {//后雾灯
                     backFogLightBtn.setActivated(!backFogLightBtn.isActivated());
-                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_RearFogLamp.toString(), transInt(backFogLightBtn.isActivated()));
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RearFogLamp.toString(), transInt(backFogLightBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_leftLight: {//左转
                     leftLightBtn.setActivated(!leftLightBtn.isActivated());
                     if (leftLightBtn.isActivated()) {
                         rightLightBtn.setActivated(false);
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RightTurningLamp.toString(), transInt(rightLightBtn.isActivated()) + 1);
                     }
-                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_LeftTurningLamp.toString(), transInt(leftLightBtn.isActivated()));
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LeftTurningLamp.toString(), transInt(leftLightBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_rightLight: {//右转
                     rightLightBtn.setActivated(!rightLightBtn.isActivated());
                     if (rightLightBtn.isActivated()) {
                         leftLightBtn.setActivated(false);
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LeftTurningLamp.toString(), transInt(leftLightBtn.isActivated()) + 1);
                     }
-                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_RightTurningLamp.toString(), transInt(rightLightBtn.isActivated()));
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RightTurningLamp.toString(), transInt(rightLightBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_coolAir: {//冷气
@@ -249,10 +254,10 @@ public class MainRightFragment extends Fragment {
                         hotAirBtn.setActivated(false);
                         offAirBtn.setActivated(false);
                     }
-                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_model.toString(), transInt(coolAirBtn.isActivated()));
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_model.toString(), transInt(coolAirBtn.isActivated()));
                     if (!coolAirBtn.isActivated() && !hotAirBtn.isActivated()) {//冷气暖气为关
-                        App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_model.toString(), 2);
-                        App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), 0);
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_model.toString(), 2);
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), 0);
                         offAirBtn.setActivated(true);
                         seekBar.setEnabled(false);
                         seekBar.setProgress(0);
@@ -266,10 +271,10 @@ public class MainRightFragment extends Fragment {
                         coolAirBtn.setActivated(false);
                         offAirBtn.setActivated(false);
                     }
-                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_model.toString(), transInt(hotAirBtn.isActivated()));
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_model.toString(), transInt(hotAirBtn.isActivated()));
                     if (!coolAirBtn.isActivated() && !hotAirBtn.isActivated()) {//冷气暖气为关
-                        App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_model.toString(), 2);
-                        App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), 0);
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_model.toString(), 2);
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), 0);
                         offAirBtn.setActivated(true);
                         seekBar.setEnabled(false);
                         seekBar.setProgress(0);
@@ -283,23 +288,23 @@ public class MainRightFragment extends Fragment {
                         hotAirBtn.setActivated(false);
                         seekBar.setEnabled(false);
                         seekBar.setProgress(0);
-                        App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_model.toString(), 2);
-                        App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), 0);
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_model.toString(), 2);
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), 0);
                     }
                     break;
                 }
                 case R.id.rightFragment_deFog: {//除雾
                     deFogBtn.setActivated(!deFogBtn.isActivated());
-                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_Demister_Control.toString(), transInt(deFogBtn.isActivated()));
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_Demister_Control.toString(), transInt(deFogBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_errorLight: {//双闪
                     errorLightBtn.setActivated(!errorLightBtn.isActivated());
-                    App.getInstance().send_modify(HMI.toString(), HMI_Dig_Ord_DangerAlarmLamp.toString(), transInt(errorLightBtn.isActivated()));
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_DangerAlarmLamp.toString(), transInt(errorLightBtn.isActivated()) + 1);
                     break;
                 }
             }
-            App.getInstance().send_send(HMI.toString());
+            App.getInstance().sendCommand(HMI.toString());
         }
     };
 

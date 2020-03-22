@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.wubeibei.smartscreenphone.R;
 import com.wubeibei.smartscreenphone.activity.App;
 import com.wubeibei.smartscreenphone.bean.MessageWrap;
-import com.wubeibei.smartscreenphone.util.BaseHandler;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -27,18 +25,8 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.Locale;
 
 import static com.wubeibei.smartscreenphone.command.MessageName.HMI;
-import static com.wubeibei.smartscreenphone.command.SignalName.BCM_ACBlowingLevel;
-import static com.wubeibei.smartscreenphone.command.SignalName.BCM_DemisterStatus;
-import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_DangerAlarmLamp;
-import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_HighBeam;
-import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_LeftTurningLamp;
-import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_LowBeam;
-import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_RearFogLamp;
-import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_RightTurningLamp;
 import static com.wubeibei.smartscreenphone.command.SignalName.HIM_Dig_Ord_TotalOdmeter;
 import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_Alam;
-import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_LoWBeam;
-import static com.wubeibei.smartscreenphone.command.SignalName.VCU_ACWorkingStatus;
 import static com.wubeibei.smartscreenphone.command.SignalName.Wheel_Speed_ABS;
 import static com.wubeibei.smartscreenphone.command.SignalName.can_RemainKm;
 import static com.wubeibei.smartscreenphone.command.SignalName.can_num_PackAverageTemp;
@@ -115,9 +103,9 @@ public class MainShowFragment extends Fragment {
                 }
                 newSpeed = speed;//新速度
                 if (newSpeed <= MIN_SPEED)
-                    App.getInstance().send_modify_send(HMI.toString(), HMI_Dig_Ord_Alam.toString(), 1);
+                    App.getInstance().modifysendcommand(HMI.toString(), HMI_Dig_Ord_Alam.toString(), 1);
                 else
-                    App.getInstance().send_modify_send(HMI.toString(), HMI_Dig_Ord_Alam.toString(), 2);
+                    App.getInstance().modifysendcommand(HMI.toString(), HMI_Dig_Ord_Alam.toString(), 2);
                 if (newSpeed < 100) {
                     speedTv.setText(String.format(Locale.CHINA, "%.1f", newSpeed));
                 } else {

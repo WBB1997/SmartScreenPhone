@@ -127,12 +127,12 @@ public class App extends Application {
     }
 
     // 发送修改信号值数据
-    public void send_modify(String msg_id, String signal_name, double value){
+    public void modifyCommand(String msg_name, String signal_name, double value){
         if (connectionManager.isConnect()) {
             try {
                 JSONObject jsonObject = new JSONObject();
                 JSONObject data = new JSONObject();
-                data.put("msg_id", msg_id);
+                data.put("msg_name", msg_name);
                 data.put("signal_name", signal_name);
                 data.put("value", value);
                 jsonObject.put("action", "modify");
@@ -149,13 +149,13 @@ public class App extends Application {
     }
 
     // 发送send数据
-    public void send_send(String msg_id){
+    public void sendCommand(String msg_name){
         if (connectionManager.isConnect()) {
             try {
                 JSONObject jsonObject = new JSONObject();
                 JSONObject data = new JSONObject();
 
-                data.put("msg_id", msg_id);
+                data.put("msg_name", msg_name);
                 jsonObject.put("action", "send");
                 jsonObject.put("data",data);
 
@@ -172,9 +172,9 @@ public class App extends Application {
     }
 
     // 发送ModifyandSend数据
-    public void send_modify_send(String msg_id, String signal_name, double value){
-        send_modify(msg_id,signal_name,value);
-        send_send(msg_id);
+    public void modifysendcommand(String msg_name, String signal_name, double value){
+        modifyCommand(msg_name,signal_name,value);
+        sendCommand(msg_name);
     }
 
     // 弹出提示框
