@@ -197,13 +197,32 @@ public class MainRightFragment extends Fragment {
         @Override
         protected void onSingleClick(View v) {
             switch (v.getId()) {
+                // 划出右面板
                 case R.id.rightFragment_dl_clickBtn: {
                     activity.rightDrawerLayout.closeDrawer(GravityCompat.END);
                     break;
                 }
+                case R.id.rightFragment_leftLight: {//左转
+                    leftLightBtn.setActivated(!leftLightBtn.isActivated());
+                    if (leftLightBtn.isActivated() && rightLightBtn.isActivated()) {
+                        rightLightBtn.setActivated(false);
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RightTurningLamp.toString(), transInt(rightLightBtn.isActivated()) + 1);
+                    }
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LeftTurningLamp.toString(), transInt(leftLightBtn.isActivated()) + 1);
+                    break;
+                }
+                case R.id.rightFragment_rightLight: {//右转
+                    rightLightBtn.setActivated(!rightLightBtn.isActivated());
+                    if (rightLightBtn.isActivated() && leftLightBtn.isActivated()) {
+                        leftLightBtn.setActivated(false);
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LeftTurningLamp.toString(), transInt(leftLightBtn.isActivated()) + 1);
+                    }
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RightTurningLamp.toString(), transInt(rightLightBtn.isActivated()) + 1);
+                    break;
+                }
                 case R.id.rightFragment_lowBeam: {//近光灯
                     lowbeamBtn.setActivated(!lowbeamBtn.isActivated());
-                    if (lowbeamBtn.isActivated()) {//点击后近光灯为开
+                    if (lowbeamBtn.isActivated() && highbeamBtn.isActivated()) {//点击后近光灯为开
                         highbeamBtn.setActivated(false);//远光灯关闭
                         App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_HighBeam.toString(), transInt(highbeamBtn.isActivated()) + 1);
                     }
@@ -212,11 +231,11 @@ public class MainRightFragment extends Fragment {
                 }
                 case R.id.rightFragment_highBeam: {//远光灯
                     highbeamBtn.setActivated(!highbeamBtn.isActivated());
-                    if (highbeamBtn.isActivated()) {//点击后远光灯为开
+                    if (highbeamBtn.isActivated() && lowbeamBtn.isActivated()) {//点击后远光灯为开
                         lowbeamBtn.setActivated(false);//近光灯关闭
                         App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), transInt(lowbeamBtn.isActivated()) + 1);
                     }
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), transInt(highbeamBtn.isActivated()) + 1);
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_HighBeam.toString(), transInt(highbeamBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_frontFogLight: {//前雾灯开关
@@ -229,32 +248,15 @@ public class MainRightFragment extends Fragment {
                     App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RearFogLamp.toString(), transInt(backFogLightBtn.isActivated()) + 1);
                     break;
                 }
-                case R.id.rightFragment_leftLight: {//左转
-                    leftLightBtn.setActivated(!leftLightBtn.isActivated());
-                    if (leftLightBtn.isActivated()) {
-                        rightLightBtn.setActivated(false);
-                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RightTurningLamp.toString(), transInt(rightLightBtn.isActivated()) + 1);
-                    }
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LeftTurningLamp.toString(), transInt(leftLightBtn.isActivated()) + 1);
-                    break;
-                }
-                case R.id.rightFragment_rightLight: {//右转
-                    rightLightBtn.setActivated(!rightLightBtn.isActivated());
-                    if (rightLightBtn.isActivated()) {
-                        leftLightBtn.setActivated(false);
-                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LeftTurningLamp.toString(), transInt(leftLightBtn.isActivated()) + 1);
-                    }
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RightTurningLamp.toString(), transInt(rightLightBtn.isActivated()) + 1);
-                    break;
-                }
                 case R.id.rightFragment_coolAir: {//冷气
                     coolAirBtn.setActivated(!coolAirBtn.isActivated());
                     if (coolAirBtn.isActivated()) {//冷气为开
                         seekBar.setEnabled(true);
                         hotAirBtn.setActivated(false);
                         offAirBtn.setActivated(false);
+                        // 如果开冷气，那么要发送开冷气信号
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_model.toString(), 0);
                     }
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_model.toString(), transInt(coolAirBtn.isActivated()));
                     if (!coolAirBtn.isActivated() && !hotAirBtn.isActivated()) {//冷气暖气为关
                         App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_model.toString(), 2);
                         App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), 0);
@@ -266,13 +268,15 @@ public class MainRightFragment extends Fragment {
                 }
                 case R.id.rightFragment_hotAir: {//暖气
                     hotAirBtn.setActivated(!hotAirBtn.isActivated());
-                    if (hotAirBtn.isActivated()) {//冷气为开
+                    if (hotAirBtn.isActivated()) {//暖气为开
                         seekBar.setEnabled(true);
                         coolAirBtn.setActivated(false);
                         offAirBtn.setActivated(false);
+                        // 如果开暖气，那么要发送开暖气信号
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_model.toString(), transInt(hotAirBtn.isActivated()));
                     }
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_model.toString(), transInt(hotAirBtn.isActivated()));
-                    if (!coolAirBtn.isActivated() && !hotAirBtn.isActivated()) {//冷气暖气为关
+
+                    if (!coolAirBtn.isActivated() && !hotAirBtn.isActivated()) {//冷气暖气都为关
                         App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_model.toString(), 2);
                         App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_air_grade.toString(), 0);
                         offAirBtn.setActivated(true);
