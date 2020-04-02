@@ -28,9 +28,7 @@ import java.nio.ByteOrder;
 
 public class App extends Application {
     private static final String TAG = "App";
-//    private static ConnectionInfo info = new ConnectionInfo("192.168.1.60", 5118);
-//    private static ConnectionInfo info = new ConnectionInfo("192.168.0.100", 5118);
-    private static ConnectionInfo info = new ConnectionInfo("10.0.2.2", 5118);
+    private static ConnectionInfo info = new ConnectionInfo("192.168.0.101", 5118);
     private IConnectionManager connectionManager;
     private static App instance = null;
     private boolean login = false; // 是否登录
@@ -101,7 +99,7 @@ public class App extends Application {
     private void receivingHandler(ConnectionInfo info, String action, OriginalData data) {
         byte[] bytes = data.getBodyBytes();
         String string = new String(bytes);
-        LogUtil.d(TAG, string);
+        LogUtil.d(TAG, "receive: " + string);
         //转发给其他模块
         EventBus.getDefault().post(MessageWrap.get(string));
     }
@@ -138,6 +136,7 @@ public class App extends Application {
                 jsonObject.put("action", "modify");
                 jsonObject.put("data",data);
                 MessageWrap messageWrap = MessageWrap.get(jsonObject.toJSONString());
+                LogUtil.d(TAG, jsonObject.toJSONString());
                 connectionManager.send(messageWrap);
             }catch (JSONException e) {
                 e.printStackTrace();
@@ -160,6 +159,7 @@ public class App extends Application {
                 jsonObject.put("data",data);
 
                 MessageWrap messageWrap = MessageWrap.get(jsonObject.toJSONString());
+                LogUtil.d(TAG, jsonObject.toJSONString());
                 connectionManager.send(messageWrap);
             }catch (JSONException e) {
                 e.printStackTrace();

@@ -101,7 +101,7 @@ public class MainDownFragment extends Fragment {
     public void messageEventBus(MessageWrap messageWrap) {
         JSONObject jsonObject = JSON.parseObject(messageWrap.getMessage());
         String action = jsonObject.getString("action");
-        if (action.equals("modify")) {
+        if (action.equals("instruction")) {
             JSONObject data = jsonObject.getJSONObject("data");
             String signal = data.getString("signal_name");
             if (signal.equals(RCU_Dig_Ord_SystemStatus.toString())) {

@@ -32,6 +32,7 @@ import static com.wubeibei.smartscreenphone.command.MessageName.HMI;
 import static com.wubeibei.smartscreenphone.command.SignalName.BCM_ACBlowingLevel;
 import static com.wubeibei.smartscreenphone.command.SignalName.BCM_DemisterStatus;
 import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_DangerAlarmLamp;
+import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_FrontFogLamp;
 import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_HighBeam;
 import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_LeftTurningLamp;
 import static com.wubeibei.smartscreenphone.command.SignalName.BCM_Flg_Stat_LowBeam;
@@ -145,7 +146,7 @@ public class MainRightFragment extends Fragment {
     private SeekBar.OnSeekBarChangeListener onSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            LogUtil.d(TAG,String.valueOf(progress));
+            LogUtil.d(TAG, String.valueOf(progress));
             if (fromUser) {
                 if (progress >= 0 && progress < 10) {
                     seekBarIndex = 0;
@@ -203,49 +204,39 @@ public class MainRightFragment extends Fragment {
                     break;
                 }
                 case R.id.rightFragment_leftLight: {//左转
-                    leftLightBtn.setActivated(!leftLightBtn.isActivated());
-                    if (leftLightBtn.isActivated() && rightLightBtn.isActivated()) {
-                        rightLightBtn.setActivated(false);
-                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RightTurningLamp.toString(), transInt(rightLightBtn.isActivated()) + 1);
+                    if (!leftLightBtn.isActivated() && rightLightBtn.isActivated()) {
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RightTurningLamp.toString(), 1);
                     }
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LeftTurningLamp.toString(), transInt(leftLightBtn.isActivated()) + 1);
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LeftTurningLamp.toString(), transInt(!leftLightBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_rightLight: {//右转
-                    rightLightBtn.setActivated(!rightLightBtn.isActivated());
-                    if (rightLightBtn.isActivated() && leftLightBtn.isActivated()) {
-                        leftLightBtn.setActivated(false);
-                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LeftTurningLamp.toString(), transInt(leftLightBtn.isActivated()) + 1);
+                    if (!rightLightBtn.isActivated() && leftLightBtn.isActivated()) {
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LeftTurningLamp.toString(), 1);
                     }
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RightTurningLamp.toString(), transInt(rightLightBtn.isActivated()) + 1);
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RightTurningLamp.toString(), transInt(!rightLightBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_lowBeam: {//近光灯
-                    lowbeamBtn.setActivated(!lowbeamBtn.isActivated());
-                    if (lowbeamBtn.isActivated() && highbeamBtn.isActivated()) {//点击后近光灯为开
-                        highbeamBtn.setActivated(false);//远光灯关闭
-                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_HighBeam.toString(), transInt(highbeamBtn.isActivated()) + 1);
+                    if (!lowbeamBtn.isActivated() && highbeamBtn.isActivated()) {//点击后近光灯为开
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_HighBeam.toString(), 1);
                     }
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), transInt(lowbeamBtn.isActivated()) + 1);
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), transInt(!lowbeamBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_highBeam: {//远光灯
-                    highbeamBtn.setActivated(!highbeamBtn.isActivated());
-                    if (highbeamBtn.isActivated() && lowbeamBtn.isActivated()) {//点击后远光灯为开
-                        lowbeamBtn.setActivated(false);//近光灯关闭
-                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), transInt(lowbeamBtn.isActivated()) + 1);
+                    if (!highbeamBtn.isActivated() && lowbeamBtn.isActivated()) {//点击后远光灯为开
+                        App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_LoWBeam.toString(), 1);
                     }
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_HighBeam.toString(), transInt(highbeamBtn.isActivated()) + 1);
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_HighBeam.toString(), transInt(!highbeamBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_frontFogLight: {//前雾灯开关
-                    frontFogLightBtn.setActivated(!frontFogLightBtn.isActivated());
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_FrontFogLamp.toString(), transInt(frontFogLightBtn.isActivated()) + 1);
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_FrontFogLamp.toString(), transInt(!frontFogLightBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_backFogLight: {//后雾灯
-                    backFogLightBtn.setActivated(!backFogLightBtn.isActivated());
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RearFogLamp.toString(), transInt(backFogLightBtn.isActivated()) + 1);
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_RearFogLamp.toString(), transInt(!backFogLightBtn.isActivated()) + 1);
                     break;
                 }
                 case R.id.rightFragment_coolAir: {//冷气
@@ -297,14 +288,13 @@ public class MainRightFragment extends Fragment {
                     }
                     break;
                 }
-                case R.id.rightFragment_deFog: {//除雾
-                    deFogBtn.setActivated(!deFogBtn.isActivated());
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_Demister_Control.toString(), transInt(deFogBtn.isActivated()) + 1);
-                    break;
-                }
+//                case R.id.rightFragment_deFog: {//除雾
+//                    deFogBtn.setActivated(!deFogBtn.isActivated());
+//                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_Demister_Control.toString(), transInt(deFogBtn.isActivated()) + 1);
+//                    break;
+//                }
                 case R.id.rightFragment_errorLight: {//双闪
-                    errorLightBtn.setActivated(!errorLightBtn.isActivated());
-                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_DangerAlarmLamp.toString(), transInt(errorLightBtn.isActivated()) + 1);
+                    App.getInstance().modifyCommand(HMI.toString(), HMI_Dig_Ord_DangerAlarmLamp.toString(), transInt(!errorLightBtn.isActivated()) + 1);
                     break;
                 }
             }
@@ -318,7 +308,7 @@ public class MainRightFragment extends Fragment {
     public void messageEventBus(MessageWrap messageWrap) {
         JSONObject jsonObject = JSON.parseObject(messageWrap.getMessage());
         String action = jsonObject.getString("action");
-        if (action.equals("modify")) {
+        if (action.equals("instruction")) {
             JSONObject data = jsonObject.getJSONObject("data");
             String signal = data.getString("signal_name");
             if (signal.equals(BCM_Flg_Stat_LeftTurningLamp.toString())) {//左转
@@ -348,6 +338,9 @@ public class MainRightFragment extends Fragment {
             } else if (signal.equals(BCM_Flg_Stat_RearFogLamp.toString())) {//后雾灯
                 int value = (int) data.getDoubleValue("value");
                 backFogLightBtn.setActivated(value == 1);
+            } else if (signal.equals(BCM_Flg_Stat_FrontFogLamp.toString())) {//前雾灯
+                int value = (int) data.getDoubleValue("value");
+                frontFogLightBtn.setActivated(value == 1);
             } else if (signal.equals(BCM_Flg_Stat_DangerAlarmLamp.toString())) {// 双闪
                 int value = (int) data.getDoubleValue("value");
                 errorLightBtn.setActivated(value == 1);

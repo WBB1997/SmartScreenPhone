@@ -19,6 +19,8 @@ import com.wubeibei.smartscreenphone.R;
 import com.wubeibei.smartscreenphone.activity.App;
 import com.wubeibei.smartscreenphone.bean.MessageWrap;
 
+import net.qiujuer.genius.kit.handler.Run;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -29,7 +31,6 @@ import static com.wubeibei.smartscreenphone.command.SignalName.HIM_Dig_Ord_Total
 import static com.wubeibei.smartscreenphone.command.SignalName.HMI_Dig_Ord_Alam;
 import static com.wubeibei.smartscreenphone.command.SignalName.Wheel_Speed_ABS;
 import static com.wubeibei.smartscreenphone.command.SignalName.can_RemainKm;
-import static com.wubeibei.smartscreenphone.command.SignalName.can_num_PackAverageTemp;
 
 
 public class MainShowFragment extends Fragment {
@@ -46,9 +47,11 @@ public class MainShowFragment extends Fragment {
     private double lastRemainKm = 0;//上一次的剩余里程数
     private boolean totalRemainKmFlag = true;//判断是否是第一次接收到总里程
     private final int MIN_SPEED = 5;//低速报警值
+
     public MainShowFragment() {
 
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -62,6 +65,7 @@ public class MainShowFragment extends Fragment {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -93,7 +97,7 @@ public class MainShowFragment extends Fragment {
     public void messageEventBus(MessageWrap messageWrap) {
         JSONObject jsonObject = JSON.parseObject(messageWrap.getMessage());
         String action = jsonObject.getString("action");
-        if (action.equals("modify")) {
+        if (action.equals("instruction")) {
             JSONObject data = jsonObject.getJSONObject("data");
             String signal = data.getString("signal_name");
             if (signal.equals(Wheel_Speed_ABS.toString())) {//车速信号
@@ -102,25 +106,15 @@ public class MainShowFragment extends Fragment {
                     return;
                 }
                 newSpeed = speed;//新速度
-                if (newSpeed <= MIN_SPEED)
-                    App.getInstance().modifysendcommand(HMI.toString(), HMI_Dig_Ord_Alam.toString(), 1);
-                else
-                    App.getInstance().modifysendcommand(HMI.toString(), HMI_Dig_Ord_Alam.toString(), 2);
-                if (newSpeed < 100) {
-                    speedTv.setText(String.format(Locale.CHINA, "%.1f", newSpeed));
-                } else {
-                    speedTv.setText(String.format(Locale.CHINA, "%.0f", newSpeed));
-                }
-                showTotalMile(totalMile);
-                avgSpeedTv.setText(String.valueOf((int) calculateAvgSpeed(newSpeed)));
-            }
-            if (signal.equals(can_num_PackAverageTemp.toString())) {//电池包平均温度
-                double value = data.getDouble("value");
-                temperatureTv.setText(String.valueOf((int) value));
-            }
-            if (signal.equals(HIM_Dig_Ord_TotalOdmeter.toString())) {//总里程（只来自主机）
-                totalMile = data.getIntValue("value");
-                showTotalMile(totalMile);
+                Run.onUiSync(() -> {
+                    if (newSpeed < 100) {
+                        speedTv.setText(String.format(Locale.CHINA, "%.1f", newSpeed));
+                    } else {
+                        speedTv.setText(String.format(Locale.CHINA, "%.0f", newSpeed));
+                    }
+//                showTotalMile(totalMile);
+                    avgSpeedTv.setText(String.valueOf((int) calculateAvgSpeed(newSpeed)));
+                });
             }
             if (signal.equals(can_RemainKm.toString())) {//剩余里程数
                 int value = (int) data.getDoubleValue("data");

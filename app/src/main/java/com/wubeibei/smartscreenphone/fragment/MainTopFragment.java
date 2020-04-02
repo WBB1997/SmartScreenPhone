@@ -1,5 +1,6 @@
 package com.wubeibei.smartscreenphone.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Message;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,9 +21,12 @@ import com.wubeibei.smartscreenphone.R;
 import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.util.BaseHandler;
 
+import net.qiujuer.genius.kit.handler.Run;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -83,7 +88,7 @@ public class MainTopFragment extends Fragment {
     public void messageEventBus(MessageWrap messageWrap) {
         JSONObject jsonObject = JSON.parseObject(messageWrap.getMessage());
         String action = jsonObject.getString("action");
-        if (action.equals("modify")) {
+        if (action.equals("instruction")) {
             JSONObject data = jsonObject.getJSONObject("data");
             String signal = data.getString("signal_name");
             if (signal.equals(OBU_LocalTimeMinute.toString())) {//本地时间
@@ -98,18 +103,21 @@ public class MainTopFragment extends Fragment {
                 if (value > 100) {
                     value = 100;
                 }
-                batteryTv.setText(value + "%");
-                if (value >= 0 && value < 17) {
+                if(value < 1)
+                    value = 1;
+                final String valueString = MessageFormat.format("{0}%", value);
+                Run.onUiSync(() -> batteryTv.setText(valueString));
+                if (value < 17) {
                     batteryIv.setBackgroundResource(R.drawable.ic_battery_1);
-                } else if (value >= 17 && value < 37) {
+                } else if (value < 37) {
                     batteryIv.setBackgroundResource(R.drawable.ic_battery_2);
-                } else if (value >= 37 && value < 54) {
+                } else if (value < 54) {
                     batteryIv.setBackgroundResource(R.drawable.ic_battery_3);
-                } else if (value >= 54 && value < 71) {
+                } else if (value < 71) {
                     batteryIv.setBackgroundResource(R.drawable.ic_battery_4);
-                } else if (value >= 71 && value < 90) {
+                } else if (value < 90) {
                     batteryIv.setBackgroundResource(R.drawable.ic_battery_5);
-                } else if (value >= 90) {
+                } else {
                     batteryIv.setBackgroundResource(R.drawable.ic_battery_5);
                 }
             }
