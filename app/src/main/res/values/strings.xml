@@ -24,7 +24,7 @@
     <string name="default_avg_speed_en">AVERAGE SPEED</string>
     <string name="default_avg_speed">0</string>
     <string name="default_unit_km_h">km/h</string>
-    <string name="default_sharing_van">SHARING VAN</string>
+    <string name="default_title">HUAT</string>
     <string name="default_battery">0%</string>
     <string name="default_time">23:59</string>
     <string name="default_longDrive">远程驾驶</string>

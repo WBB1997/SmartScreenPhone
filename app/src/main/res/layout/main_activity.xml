@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="227dp"
             android:layout_below="@id/main_activity_second_layout"
-            android:background="@drawable/wh_main_bg"
+            android:background="@drawable/jingzhou"
             android:paddingTop="7dp"
             android:paddingBottom="7dp">
             <!--安全带报警-->
@@ -99,46 +99,46 @@
                 <FrameLayout
                     android:layout_width="222dp"
                     android:layout_height="match_parent">
-                    <!--路线-->
-                    <RelativeLayout
-                        android:layout_width="140dp"
-                        android:layout_height="16dp"
-                        android:layout_marginLeft="22dp"
-                        android:layout_marginTop="9dp"
-                        android:background="@drawable/main_activity_route_bg">
+<!--                    &lt;!&ndash;路线&ndash;&gt;-->
+<!--                    <RelativeLayout-->
+<!--                        android:layout_width="140dp"-->
+<!--                        android:layout_height="16dp"-->
+<!--                        android:layout_marginLeft="22dp"-->
+<!--                        android:layout_marginTop="9dp"-->
+<!--                        android:background="@drawable/main_activity_route_bg">-->
 
-                        <TextView
-                            android:id="@+id/main_activity_center_route_startSta"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="7dp"
-                            android:text="T创实验室"
-                            android:textColor="@color/main_activity_center_route_text"
-                            android:textSize="8sp" />
+<!--                        <TextView-->
+<!--                            android:id="@+id/main_activity_center_route_startSta"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_alignParentLeft="true"-->
+<!--                            android:layout_centerVertical="true"-->
+<!--                            android:layout_marginLeft="7dp"-->
+<!--                            android:text="T创实验室"-->
+<!--                            android:textColor="@color/main_activity_center_route_text"-->
+<!--                            android:textSize="8sp" />-->
 
-                        <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_marginLeft="15dp"
-                            android:layout_marginRight="15dp"
-                            android:layout_toLeftOf="@id/main_activity_center_route_endSta"
-                            android:layout_toRightOf="@id/main_activity_center_route_startSta"
-                            android:background="@drawable/main_activity_route_line" />
+<!--                        <ImageView-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_centerVertical="true"-->
+<!--                            android:layout_marginLeft="15dp"-->
+<!--                            android:layout_marginRight="15dp"-->
+<!--                            android:layout_toLeftOf="@id/main_activity_center_route_endSta"-->
+<!--                            android:layout_toRightOf="@id/main_activity_center_route_startSta"-->
+<!--                            android:background="@drawable/main_activity_route_line" />-->
 
-                        <TextView
-                            android:id="@+id/main_activity_center_route_endSta"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_centerVertical="true"
-                            android:layout_marginRight="7dp"
-                            android:text="一号设计楼"
-                            android:textColor="@color/main_activity_center_route_text"
-                            android:textSize="8sp" />
-                    </RelativeLayout>
+<!--                        <TextView-->
+<!--                            android:id="@+id/main_activity_center_route_endSta"-->
+<!--                            android:layout_width="wrap_content"-->
+<!--                            android:layout_height="wrap_content"-->
+<!--                            android:layout_alignParentRight="true"-->
+<!--                            android:layout_centerVertical="true"-->
+<!--                            android:layout_marginRight="7dp"-->
+<!--                            android:text="一号设计楼"-->
+<!--                            android:textColor="@color/main_activity_center_route_text"-->
+<!--                            android:textSize="8sp" />-->
+<!--                    </RelativeLayout>-->
                     <!--行驶参数-->
                     <LinearLayout
                         android:layout_width="match_parent"

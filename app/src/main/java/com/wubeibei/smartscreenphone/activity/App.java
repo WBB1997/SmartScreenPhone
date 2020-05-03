@@ -66,7 +66,7 @@ public class App extends Application {
         connectionManager.registerReceiver(new SocketActionAdapter(){
             @Override
             public void onSocketConnectionSuccess(ConnectionInfo info, String action) {
-                App.showToast(action);
+                App.showToast("已重连");
                 // 如果已经登录过了，重连时就发送重新登陆指令
                 if(login){
                     JSONObject jsonObject = new JSONObject();

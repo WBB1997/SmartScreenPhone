@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/login_activity_bg">
-
+`
     <RelativeLayout
         android:layout_width="157dp"
         android:layout_height="126dp"

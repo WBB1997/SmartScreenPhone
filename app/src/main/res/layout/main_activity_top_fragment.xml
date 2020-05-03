@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/default_sharing_van"
+        android:text="@string/default_title"
         android:textColor="@color/main_activity_top_fragment_sharingvan_text"
         android:textSize="15sp"
         android:textStyle="bold" />
