@@ -25,6 +25,8 @@ import com.wubeibei.smartscreenphone.bean.MessageWrap;
 import com.wubeibei.smartscreenphone.util.LogUtil;
 import com.wubeibei.smartscreenphone.view.CustomOnClickListener;
 
+import net.qiujuer.genius.kit.handler.Run;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -311,70 +313,74 @@ public class MainRightFragment extends Fragment {
         if (action.equals("instruction")) {
             JSONObject data = jsonObject.getJSONObject("data");
             String signal = data.getString("signal_name");
-            if (signal.equals(BCM_Flg_Stat_LeftTurningLamp.toString())) {//左转
-                int value = (int) data.getDoubleValue("value");
-                leftLightBtn.setActivated(value == 1);
-                if (value == 1) {
-                    rightLightBtn.setActivated(false);
+            Run.onUiSync(()->{
+                if (signal.equals(BCM_Flg_Stat_LeftTurningLamp.toString())) {//左转
+                    int value = (int) data.getDoubleValue("value");
+                    leftLightBtn.setActivated(value == 1);
+                    if (value == 1) {
+                        rightLightBtn.setActivated(false);
+                    }
+                } else if (signal.equals(BCM_Flg_Stat_RightTurningLamp.toString())) {//右转
+                    int value = (int) data.getDoubleValue("value");
+                    rightLightBtn.setActivated(value == 1);
+                    if (value == 1) {
+                        leftLightBtn.setActivated(false);
+                    }
+                } else if (signal.equals(BCM_Flg_Stat_HighBeam.toString())) {//远光灯
+                    int value = (int) data.getDoubleValue("value");
+                    highbeamBtn.setActivated(value == 1);
+                    if (value == 1) {
+                        lowbeamBtn.setActivated(false);
+                    }
+                } else if (signal.equals(BCM_Flg_Stat_LowBeam.toString())) {//近光灯
+                    int value = (int) data.getDoubleValue("value");
+                    lowbeamBtn.setActivated(value == 1);
+                    if (value == 1) {
+                        highbeamBtn.setActivated(false);
+                    }
+                } else if (signal.equals(BCM_Flg_Stat_RearFogLamp.toString())) {//后雾灯
+                    int value = (int) data.getDoubleValue("value");
+                    backFogLightBtn.setActivated(value == 1);
+                } else if (signal.equals(BCM_Flg_Stat_FrontFogLamp.toString())) {//前雾灯
+                    int value = (int) data.getDoubleValue("value");
+                    frontFogLightBtn.setActivated(value == 1);
+                } else if (signal.equals(BCM_Flg_Stat_DangerAlarmLamp.toString())) {// 双闪
+                    int value = (int) data.getDoubleValue("value");
+                    errorLightBtn.setActivated(value == 1);
+                } else if (signal.equals(BCM_DemisterStatus.toString())) {//除雾状态
+                    int value = (int) data.getDoubleValue("value");
+                    deFogBtn.setActivated(value == 1);
+                } else if (signal.equals(BCM_ACBlowingLevel.toString())) {//空调风量档位
+                    int value = (int) data.getDoubleValue("value");//接收档位
+                    if (value != 6) {
+                        seekBarIndex = value;//当前档位
+                        seekBar.setProgress(seekBarIndex * 20);//设置滑动条
+                    }
+                } else if (signal.equals(VCU_ACWorkingStatus.toString())) {
+                    int value = (int) data.getDoubleValue("value");
+                    switch (value) {
+                        case 0: //制冷
+                            coolAirBtn.setActivated(true);
+                            hotAirBtn.setActivated(false);
+                            offAirBtn.setActivated(false);
+                            break;
+                        case 1: //制热
+                            coolAirBtn.setActivated(false);
+                            hotAirBtn.setActivated(true);
+                            offAirBtn.setActivated(false);
+                            break;
+                        case 2: //均关闭
+                            coolAirBtn.setActivated(false);
+                            hotAirBtn.setActivated(false);
+                            offAirBtn.setActivated(true);
+                            seekBar.setEnabled(false);
+                            break;
+                    }
                 }
-            } else if (signal.equals(BCM_Flg_Stat_RightTurningLamp.toString())) {//右转
-                int value = (int) data.getDoubleValue("value");
-                rightLightBtn.setActivated(value == 1);
-                if (value == 1) {
-                    leftLightBtn.setActivated(false);
-                }
-            } else if (signal.equals(BCM_Flg_Stat_HighBeam.toString())) {//远光灯
-                int value = (int) data.getDoubleValue("value");
-                highbeamBtn.setActivated(value == 1);
-                if (value == 1) {
-                    lowbeamBtn.setActivated(false);
-                }
-            } else if (signal.equals(BCM_Flg_Stat_LowBeam.toString())) {//近光灯
-                int value = (int) data.getDoubleValue("value");
-                lowbeamBtn.setActivated(value == 1);
-                if (value == 1) {
-                    highbeamBtn.setActivated(false);
-                }
-            } else if (signal.equals(BCM_Flg_Stat_RearFogLamp.toString())) {//后雾灯
-                int value = (int) data.getDoubleValue("value");
-                backFogLightBtn.setActivated(value == 1);
-            } else if (signal.equals(BCM_Flg_Stat_FrontFogLamp.toString())) {//前雾灯
-                int value = (int) data.getDoubleValue("value");
-                frontFogLightBtn.setActivated(value == 1);
-            } else if (signal.equals(BCM_Flg_Stat_DangerAlarmLamp.toString())) {// 双闪
-                int value = (int) data.getDoubleValue("value");
-                errorLightBtn.setActivated(value == 1);
-            } else if (signal.equals(BCM_DemisterStatus.toString())) {//除雾状态
-                int value = (int) data.getDoubleValue("value");
-                deFogBtn.setActivated(value == 1);
-            } else if (signal.equals(BCM_ACBlowingLevel.toString())) {//空调风量档位
-                int value = (int) data.getDoubleValue("value");//接收档位
-                if (value != 6) {
-                    seekBarIndex = value;//当前档位
-                    seekBar.setProgress(seekBarIndex * 20);//设置滑动条
-                }
-            } else if (signal.equals(VCU_ACWorkingStatus.toString())) {
-                int value = (int) data.getDoubleValue("value");
-                switch (value) {
-                    case 0: //制冷
-                        coolAirBtn.setActivated(true);
-                        hotAirBtn.setActivated(false);
-                        offAirBtn.setActivated(false);
-                        break;
-                    case 1: //制热
-                        coolAirBtn.setActivated(false);
-                        hotAirBtn.setActivated(true);
-                        offAirBtn.setActivated(false);
-                        break;
-                    case 2: //均关闭
-                        coolAirBtn.setActivated(false);
-                        hotAirBtn.setActivated(false);
-                        offAirBtn.setActivated(true);
-                        seekBar.setEnabled(false);
-                        break;
-                }
-            }
+            });
+
         }
+
     }
 
     //将boolean转换成int
